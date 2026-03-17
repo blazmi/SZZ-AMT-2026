@@ -14,7 +14,7 @@ Státnicové předměty pro rok 2024/25 jsou následující
 - [BPC-ZVS](#BPC-ZVS) Zpracování vícerozměrných signálů
 
 - [ ] Pro rok 2024/2025 je potřeba zkontrolovat/doplnit/přepsat otázky a okruhy.
-- [ ] Pro rok 2025/2026 je změna v otázkách BPC-UIN a změna v otázce 19 a 20 u BPC-MIC
+- [ ] Pro rok 2025/2026 je změna v otázkách BPC-UIN a změna v otázce 19 a 20 u BPC-MIC a doplnit BPC-ZVS
 ## Seznam předmětů a jejich otázek
 
 ### BPC-MVE
