@@ -1,5 +1,58 @@
 \section{ Diskrétní obraz, jeho vlastnosti a reprezentace (model kamery, projekce, digitalizace, metriky), binární, šedotónový a
 barevný obraz - barevné formáty, souborové formáty.}
+Informace jsou z přednášky 2 diskretní obraz: $http://vision.uamt.feec.vutbr.cz/ZVS/lectures/03_Diskretni_obraz.pdf$
+\subsection{Digitální obraz}
+
+Diskretní obraz je matematickou reprezentací vzorkovaného skutečného obrazu. Obraz je reprezentován maticí s rozměry MxN, kde M je šířka a N 
+výška zachyceného obrazu. Dále diskrétní obraz uchovává dimenzi. Když je obraz 1 dimenzionální tak se jedná o obraz stupni šedi. Pokud 
+je 3 dimenzionální tak se jedná o barevný obraz (3 dimenze - RGB (red,green, blue)).
+ \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/obr1.jpg}
+ \caption{Dürer - Man Drawing a Lute}
+ \vspace{-5mm}
+ \end{figure}
+%jestli chcete obrázek tak si to odkomentujte
+\subsection{Projekce}
+jev kdy zachycujeme 3D obraz na 2D snímač, ztrácíme informace o jedné dimenzi. 
+
+\subsection{Model kamery}
+Camera obscura (temná komora) - jedná se o tmavou komoru do které vstupuje světlo pouze jedním bodem (v angličtině pinhole). 
+využívá perspektivní projekci (napodobuje lidské oko, kde střed promítání je střed čočky, na senzor následně dopadají paprsky převráceně
+, za následek vzdálené objekty jsou menší než ty blíže). Matematický popis celé kamery je na principu podobnosti trojúhelníků. První 
+trojúhelník vzniká pata objektu - vrchol objektu a vstupní bod do komory, druhý vzniká pata obrazu(senzoru) vrchol obrazu a dírka. 
+ \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/troj.png}
+ \caption{perspektivní projekce}
+ \vspace{-5mm}
+ \end{figure}
+\subsection{Digitalizace}
+Převod analogového signálu na diskretní. Dva duležité pojmy: Vzorkování - určuje rozlišení obrazu(digitalizace signálu v čase), kvantování
+- udává počet úrovní (hloubku signálu, je to digitalizace signálu v amplitudě). Při pořízení snímku dochází nejdříve k primárnímu Vzorkování-
+dochází automaticky při zachycení světla na maticový snímač, buňky snímače můžou mít různé tvary ale jsou nejčastěji ortogonální (čtvercové)
+. U analogových snímačů k primárnímu vzorkování nedochází. - Následně probíhá softwarové(sekundární) vzorkování, dochází k snižení/zvýšení 
+rozlišení, interpolaci(lineární, kubická, nejbližší soused) a filtraci (Hermit, Lanczos..). Kvantování probíhá pomocí A/D převodníku, podle 
+počtu bitů N, je následně $2^N$ úrovní. Kamery mívají 12 nebo 16 bitů. Využívá se 8.(často, může i více)
+
+\subsection{Reprezentace}
+Obraz je reprezentován zapomocí matice obrazových bodů. To je vyjádřeno pomocí obrazové funkce kde g(x,y) ~ statický obrat a g(x,y,t) ~
+dynamický obraz(sekvence snímků). Obrazová funkce je buď to reprezentována zapomocí skaláru - pak se jedná o šedotónový obraz. 
+Nebo zapomocí vektoru - pak se nejčastěji jedná o RGB. g -vyjadřuje obrazovou funkci(jas u obrazu, teplota u termovize atd.). 
+\subsection{Metrika}
+Vyjadřuje odlehlost (vzdálenost 2 bodů v prostoru/rovině/přímce), vzdálenost je definovaná pro konečnou dimenzi, je značená pomocí "ro"
+a platí axiomi:   1. Nezápornost 2. totožnost 3. symetrie 4. trojuhelnikova nerovnost. V ortogonálním ratru jsou použitelné metriky na základě
+Minkowského vzdálenosti. Typický příklad: euklidovská vzdálenost, manhattanská vzdálenost a šachovnicová. 
+
+\subsection{Druhy obrazu}
+Binární - obsahuje pouze 0 a 1, výhodné na uchovávání, zabere pouze místo matice MxN.
+Monochromatický(šedotónový) - uchovává stupně šedí, nejčastěji obsahuje 255 úrovní. Pro uchovávání je potřebné MxNxpočet bitů.
+Multichromatický(barevný) - obsahuje $n*2^k$ úrovní, často n = 3 a k = 8. Pro uchovávání je nutné NxM*n*k.
+
+
+
 
 
 \section{ Konvoluční integrál, korelace obrazových signálů, okolí bodu, lineární a nelineární filtry (masky - detekce hran a rohů,
