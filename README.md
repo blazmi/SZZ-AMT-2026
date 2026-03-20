@@ -14,7 +14,7 @@ Státnicové předměty pro rok 2024/25 jsou následující
 - [BPC-ZVS](#BPC-ZVS) Zpracování vícerozměrných signálů
 
 - [ ] Pro rok 2024/2025 je potřeba zkontrolovat/doplnit/přepsat otázky a okruhy.
-
+- [ ] Pro rok 2025/2026 je změna v otázkách BPC-UIN a změna v otázce 19 a 20 u BPC-MIC a doplnit BPC-ZVS
 ## Seznam předmětů a jejich otázek
 
 ### BPC-MVE
@@ -45,10 +45,12 @@ Jak se liší a pro jaké typy úloh je určen mikroprocesor pro všeobecné pou
 - [ ] Rozdíl mezi izolovanými a paměťově mapovanými periferiemi. Způsoby obsluhy V/V: aktivní čekání, přerušení, DMA.
 Přerušení: řadič přerušení, činnost procesoru při zahájení obsluhy přerušení a návratu z přerušení, tabulka vektorů přerušení. Asynchronní a synchronní přerušení. Maskovatelné, nemaskovatelné a pseudomaskovatelné přerušení. Vnořené přerušení. RESET, činnost procesoru po RESETu.
 - [ ] Princip a vlastnosti pamětí ROM, EEPROM, FLASH. Rozdíl mezi paměťmi NOR FLASH a NAND FLASH. Princip pamětí MRAM a FeRAM.
-- [ ]  Princip a vlastnosti statických pamětí RAM (SRAM) a dynamických pamětí RAM (DRAM), synchronní paměti DRAM (SDRAM).
-Připojování paralelních pamětí SRAM, FLASH ke sběrnicím mikroprocesoru. Adresový dekodér.
+- [ ] Princip a vlastnosti statických pamětí RAM (SRAM) a synchronních dynamických pamětí RAM (SDRAM).
+Připojování paralelních pamětí SRAM a FLASH ke sběrnicím mikroprocesoru. Adresový dekodér.
 Hierarchie paměti, paměti cache, specializované paměti cache.
-- [ ] Pojem logická a fyzická adresa, ochrana paměti, memory management unit (MMU). Stránkování (princip, transformace logické adresy na fyzickou, stránkovací tabulka). Virtuální adresový prostor. Zrychlení překladu adres pomocí Translation Look-aside Buffer (TLB).
+- [ ] Zdroje hodinových impulsů pro mikrokontroléry, jejich parametry. Fázový závěs (blokové schéma, funkce, důvody
+použití). Princip a použití watch dog.
+Komunikační rozhraní UART, SPI a IIC.
 
 ### BPC-PPA
 
@@ -89,10 +91,16 @@ Hierarchie paměti, paměti cache, specializované paměti cache.
 
 ### BPC-UIN
 
-- [ ] Umělá inteligence (UI) - definice, úzká UI, obecná UI, superinteligence, strojové učení.
-- [ ] Umělé neuronové sítě - paradigmata, perceptron, algoritmus učení Backpropagation, Kohonenova samoorganizační mapa, konvoluční neuronová síť.
-- [ ] Expertní systémy (ES) - definice, architektura, teoretické zdroje pro realizaci ES, tvorba a ladění báze znalostí, průběh konzultace.
-- [ ] Počítačové vidění - předzpracování obrazu, segmentace obrazu, popis a klasifikace obrazu. 
+- [ ] Metody prohledávání stavového prostoru: formulace problému, stavový prostor, strategie prohledávání,
+      neinformované a informované metody (včetně heuristik), kompletnost a optimálnost, příklady problémů v AI
+- [ ] Biologicky inspirované výpočty: rozdělení a principy evolučních a rojových algoritmů (GA, DE, PSO, ACO, GP), lokální
+      optimalizační metody (HC, HC-12, SA), reprezentace a kódování řešení, surrogate optimalizace, teorie no free lunch,
+      prokletí dimenzionality, příklady problémů v AI.
+- [ ] Neuronové sítě – vybraná základní paradigmata: formální neuron, aktivační funkce, architektury (perceptron,
+      ADALINE, MLP, RBF, SOM), učení (včetně zpětného šíření chyby), klasifikace a regrese, problémy učení (overfitting,
+      kapacita), příklady problémů v AI
+- [ ] Neuronové sítě – vybraná DNN paradigmata: architektury (CNN - podrobně; RNN, Encoder-Decoder, Transformer -
+      přehledově), aktivační funkce, princip učení, implementace (Keras) a trénink DNN, příklady problémů v AI.
 
 ### BPC-ZVS
 
