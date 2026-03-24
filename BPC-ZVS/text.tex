@@ -58,6 +58,105 @@ Multichromatický(barevný) - obsahuje $n*2^k$ úrovní, často n = 3 a k = 8. P
 \section{ Konvoluční integrál, korelace obrazových signálů, okolí bodu, lineární a nelineární filtry (masky - detekce hran a rohů,
 filtrace šumu), typy šumu.}
 
+Note: píšu pouze s jednou rukou, pomohl jsem si s gemini, informace jsem si kontroloval. Mělo by to sedět.
+ \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=1\textwidth]{img/konv.png}
+ \caption{Konvoluční integrál}
+ \vspace{-5mm}
+ \end{figure}
+
+\subsection{Konvoluce vs Korelace}
+Konvoluce vs. Korelace v moderní praxiV současném digitálním zpracování signálů a hlubokém učení se rozdíl mezi konvolucí a korelací často stírá. 
+Většina knihoven pro konvoluční neuronové sítě (CNN), jako je TensorFlow nebo PyTorch, ve skutečnosti pod kapotou implementuje křížovou korelaci, i když se operace nazývá 
+konvoluce.Hlavní technické rozdíly:Otočení filtru (Kernel Flipping): Jediný matematický rozdíl spočívá v tom, že u čisté konvoluce je nutné jádro (filtr) otočit o 180 stupňů.
+Korelace pracuje s maskou v jejím původním stavu. U neuronových sítí je toto otočení nepodstatné, protože síť se váhy v jádru učí sama – pokud potřebuje "otočený" filtr k 
+rozpoznání příznaku, prostě si ho tak natrénuje.Matematické vlastnosti: Konvoluce je z čistě matematického hlediska výhodnější, protože splňuje důležité zákony, které usnadňují
+komplexní výpočty:Komutativita: $a * b = b * a$ (nezáleží na pořadí operace).Asociativita: $(a * b) * c = a * (b * c)$ (umožňuje seskupování operací).
+Distributivita: $a * (b + c) = (a * b) + (a * c)$.Funkční význam: * Konvoluce zkoumá vliv systému na signál. Popisuje, jak se vstupní data mění při průchodu určitým 
+prostředím nebo filtrem.Korelace zkoumá shodu (podobu). Porovnává vstupní data s maskou (šablonou) a hledá místa, kde se tyto dva vzory nejvíce překrývají.
+\subsection{typy šumů}
+Šum - data bez významu, jsou vedlejším efektem ostatních aktivit(kvantizace, nestabilita snímače, atd..)
+
+Pepper and salt - impulsní šum projevující se zrněním, u obrazu s více jasovými úrovněmi.
+Gaussovský -  hustota pravděpodobnosti šumu má gaussovo rozložení.
+Poissonovský (Photon counting) – u senzorů pracujících jako čítač fotonů (CCD)
+bílý = idealizovaný, používá se pro simulace nejhorších degradací obrazu, ve výkonovém spektru má rovnoměrně zastoupeny všechny frekvence
+kvantizační = není použit dostatečný počet jasových úrovní
+aditivní = vzniká při přenosu obrazu nebo snímání 
+multiplikativní = šum TV rasteru, charakter vodorovných pruhů
+
+\subsection{lineární a nelineární filtry}
+Lokální lineární filtry
+intenzita bodu je rovna součtu součinů intenzit bodů v okolí a příslušných váhových 
+koeficientů (matice koeficientů = filtr). Lokální nelineární filtry- intenzita bodu není dána lineární kombinací vstupních hodnot, ale jiným algoritmem, 
+nejčastěji vybírá některou z hodnot ve stanoveném okolí.
+Mezi lineární filtry řadíme průměrovací a s gaussovým rozložením. Do nelineárních spadá Medián(Kvantil - vybere z kernelu střední hodnotu. Nerozmazává hrany, ale ztrácíme detaily)
+, Modus (hodnota, která se v okolí vyskytuje nejčastěji - nejčetnější hodnota intenzity), Min/Max(eroze/dilatace- min - potlačí šum v tmavých oblastech a zmenšuje čáry a eroze objektu, 
+max naopak potlačí šum ve světlých oblastech, ale zesiluje čáry a zvětšuje objekt), konzervativní(k odfiltrování izolovaných pixelů s velmi nízkou/vysoko intenzitou -např. sůl a pepř
+-najde v kernelu min a max, pokud hodnota je v tomto intervalu zůstane ponechána. jinak je nahrazen novou hodnotou odvozenou z okolí - třeba minimem z okolí pokud byla hodnota nižší),
+rotující maska(V tomto případě je zvolená maska rotována kolem filtrovaného bodu, např. jako na následujícícm obrázku pro masku 3×3, kdy je celkem devět možných poloh masky. Pro každou 
+její pozici je spočítána míra homogenity jako např. součet diferencí. Filtrace se pak provádí jen pro jednu polohu masky, pro níž je míra homogenity nejvyšší 
+(nejnižší diference/rozptyl). Takto je nalezeno to okolí bodu, které k němu patří s největší pravděpodobností. Filtrace rotující maskou tedy částečně řeší problémy s 
+rozmazáváním a porušováním tenkých čar a ostrých rohů, nevýhodou je však vyšší časová náročnost výpočtu.)
+ \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=1\textwidth]{img/rotmaska.png}
+ \caption{Rotující maska}
+ \vspace{-5mm}
+ \end{figure}
+
+ \subsection{Okolí bodu}
+ 1D-množina složená z aktualního bodu a jeho sousedů ve vzdálenosti. 2D- 4 okolí -body sousedící hranou(ortogonální směry NESW), 8 mi okolí-body sousedící hranou nebo rohem,
+ 6 okolí - body sousedící hranou v hexagonálním rastru.
+
+ \subsection{Detekce hran a rohů}
+\begin{itemize}
+    \item Hrany, čáry a body jsou nositeli informací o různých oblastech v obrazu, zejména pak o hranicích objektů[cite: 25].
+    \item Hrana je definována jako místo v obrazu, kde dochází ke strmé změně obrazové funkce $f(x,y)$[cite: 27].
+    \item Strmost obrazové funkce určuje velikost (magnitudu) hrany, normála gradientu pak její směr[cite: 28].
+    \item Rozdíl spočívá v tom, že hrana je chápána jako hranice mezi dvěma oblastmi, zatímco čára nebo bod je lokální změna jasové funkce v jinak homogenní oblasti[cite: 29, 30].
+\end{itemize} 
+\begin{itemize}
+    \item Protože je obrazová funkce $f(x,y)$ dvourozměrná, její gradient je vektor[cite: 46]: 
+    \begin{equation}
+        \nabla f(x,y) = \begin{bmatrix} G_x \\ G_y \end{bmatrix} = \begin{bmatrix} \frac{\partial f(x,y)}{\partial x} \\ \frac{\partial f(x,y)}{\partial y} \end{bmatrix}
+    \end{equation} [cite: 47]
+    \item Pro diskrétní obraz jsou složky vektoru gradientu aproximovány diferencemi: $G_x \approx \Delta_x f(x,y) = f(x,y) - f(x-n, y)$[cite: 70, 71].
+    \item \textbf{Velikost gradientu (G):} Lze aproximovat euklidovskou vzdáleností ($\sqrt{\Delta_x^2 f(x,y) + \Delta_y^2 f(x,y)}$) [cite: 76], součtem absolutních hodnot ($|\Delta_x f(x,y)| + |\Delta_y f(x,y)|$) [cite: 74], nebo maximem ($\max\{|\Delta_x f(x,y)|, |\Delta_y f(x,y)|\}$)[cite: 95].
+    \item \textbf{Směr gradientu ($\theta$):} $\theta(x,y) = \arg(\Delta_x f(x,y), \Delta_y f(x,y))$[cite: 103]. Úhel je měřen vzhledem k ose x[cite: 68].
+\end{itemize}
+\begin{itemize}
+    \item Výpočet diferencí lze zapsat jako maticové operátory[cite: 109]. Detekci hran pak lze realizovat konvolucí:
+    \begin{equation}
+        g(x,y) = f(x,y) * h
+    \end{equation}
+    kde $h$ je maska operátoru[cite: 115, 116].
+    \item Zvýraznění vyšších prostorových frekvencí v obrazu s sebou nese nevýhodu: kromě skutečných hran je zvýrazněn také šum[cite: 128].
+\end{itemize}
+Aproximují první derivaci obrazové funkce[cite: 142]. Tyto operátory většinou nejsou invariantní vůči rotaci[cite: 148].
+\begin{itemize}
+    \item \textbf{Robertsův kříž (1963):} Jednoduchý a výpočetně nenáročný operátor[cite: 151]. Oproti ostatním operátorům je hodně citlivý na šum kvůli malému počtu zpracovaných pixelů[cite: 152].
+    \item \textbf{Prewittové operátor (1966):} Využívá symetrický kernel v obvyklém rozměru $3 \times 3$[cite: 163].
+    \item \textbf{Sobelův operátor (1968):} Stejný mechanismus jako operátor Prewittové[cite: 183]. Rozdíl je pouze ve váze koeficientů u sousedů ve čtyř-okolí vzhledem ke směru detekce[cite: 184].
+    \item \textbf{Kirschův a Robinsonův operátor:} Nesymetrický kernel v obvyklém rozměru $3 \times 3$[cite: 201, 209]. Kombinuje různý počet koeficientů s různými hodnotami[cite: 202, 211].
+\end{itemize}
+Je výpočetně jednodušší a přesnější hledat inflexní body hran, tedy průchody nulou druhé derivace (tzv. zero-cross operátory)[cite: 286, 294, 295]. Tyto operátory jsou nativně invariantní vůči rotaci[cite: 296].
+\begin{itemize}
+    \item \textbf{Laplaceův operátor:} Pro aproximaci výpočtu druhé derivace se výhradně používá Laplacián[cite: 298]. Má stejné vlastnosti ve všech směrech, tj. je izotropický[cite: 300].
+    \item \textbf{LoG operátor (Laplacian of Gaussian):} Aplikace Laplaciánu po filtraci obrazu Gaussovým filtrem[cite: 303]. Derivace Gaussova filtru jsou vypočítány předem, tj. nezávisí na obrazových datech[cite: 305].
+\end{itemize}
+\begin{itemize}
+    \item Úprava obrazu s charakterem horní propusti, která zvyšuje podíl složek o vyšších frekvencích (zvýrazňuje hrany)[cite: 309].
+    \item Realizováno odečtením váženého obrazu hran od vstupního obrazu:
+    \begin{equation}
+        g(x,y) = f(x,y) - c \cdot S(x,y)
+    \end{equation}
+    kde $c$ určuje míru ostření a $S(x,y)$ je obraz hran[cite: 310, 311, 312].
+    \item Odečtením vysokých frekvencí se prohlubují extrémy[cite: 314]. Pro výpočet strmosti se nejčastěji používá Laplaceův operátor[cite: 317].
+\end{itemize}
 
 \section{Jasové transformace (histogram, kumulovaný histogram - ekvalizace, jasové korekce), geometrické transformace
 (aproximace, bilineární a afinní transformace, homogenní souřadnice, interpolace souřadnic, korekce zkreslení, rotace /
