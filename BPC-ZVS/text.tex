@@ -161,6 +161,37 @@ Je výpočetně jednodušší a přesnější hledat inflexní body hran, tedy p
 \section{Jasové transformace (histogram, kumulovaný histogram - ekvalizace, jasové korekce), geometrické transformace
 (aproximace, bilineární a afinní transformace, homogenní souřadnice, interpolace souřadnic, korekce zkreslení, rotace /
 měřítko).}
+\subsection{Jasové transoformace}
+Změna hodnot jasu, podle určité funkce. Vstupem i výstupem je obraz stejných parametrů(rozlišení, bitová hloubka). 
+Neslouží k rozpoznávání ani identifikaci objektů. Většinou součást předzpracování obrazu(úprava kontrastu, zvýšení jasu). 
+Dělení jasových transformací:
+\begin{itemize}
+    \item Globální - hodnota pixelu je vypočítána na základě celého obrazu, značeno symbolem $\Omega(I) \xrightarrow{T} f(x, y), \quad \forall x, y \in \Omega(I)$. Mezi Globální
+    transformace patří Integrální obraz, Fourierova transformace. 
+    \item Lokální - hodnota je vypočítána na základě lokálního okolí
+    \item Bodové - Hodnota je vypočítána na základě téhož pixelu
+\end{itemize}
+\begin{figure}[h!]
+ \centering
+ \includegraphics[width=0.8\textwidth]{img/globalni.png}
+ \caption{Globalni x Lokalni x Bodova jasová transformace}
+ \end{figure}
+\subsubsection{Histogram}
+    grafické zobrazení četnosti jasové hodnoty. Na ose x jsou jasové úrovně. Např pro uint8 $<0,255>$, na ose Y je vyjádřena četnost této úrovně. 
+\begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=1\textwidth]{img/histogram.png}
+ \caption{Histogram Leny}
+ \vspace{-5mm}
+ \end{figure}
+
+ \subsection{Kumulaticvní histogram}
+ Vzniká integrací klasického histogramu podle proměnné $q$. Výsledkem je spojitá neklesající funkce. Normalizovaná verze kumulovaného histogramu se používá jako převodní funkce.
+ \begin{equation}
+    h_k(q)=\sum_{i = 0}^{q} h(i) = h_k(q-1)+h(q)
+ \end{equation}
+
 
 
 \section{Morfologické operace a integrální transformace (využití FT pro zpracování vícerozměrných signálů - vzorce,
