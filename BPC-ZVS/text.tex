@@ -157,7 +157,7 @@ Je výpočetně jednodušší a přesnější hledat inflexní body hran, tedy p
     kde $c$ určuje míru ostření a $S(x,y)$ je obraz hran[cite: 310, 311, 312].
     \item Odečtením vysokých frekvencí se prohlubují extrémy[cite: 314]. Pro výpočet strmosti se nejčastěji používá Laplaceův operátor[cite: 317].
 \end{itemize}
-
+    
 \section{Jasové transformace (histogram, kumulovaný histogram - ekvalizace, jasové korekce), geometrické transformace
 (aproximace, bilineární a afinní transformace, homogenní souřadnice, interpolace souřadnic, korekce zkreslení, rotace /
 měřítko).}
@@ -168,9 +168,71 @@ Dělení jasových transformací:
 \begin{itemize}
     \item Globální - hodnota pixelu je vypočítána na základě celého obrazu, značeno symbolem $\Omega(I) \xrightarrow{T} f(x, y), \quad \forall x, y \in \Omega(I)$. Mezi Globální
     transformace patří Integrální obraz, Fourierova transformace. 
-    \item Lokální - hodnota je vypočítána na základě lokálního okolí
-    \item Bodové - Hodnota je vypočítána na základě téhož pixelu
+    \item Lokální - hodnota je vypočítána na základě lokálního okolí. $\Omega(x,y) \xrightarrow{T} f(x, y), \quad \forall x, y \in \Omega(I)$. Patří sem redukce šumu, vyhlazování
+    obrazů, zvýraznění rysů(hrany).  K vyhlazování obrazu lze využít:
+    \begin{itemize}
+        \item prostý/vážený průměr - Řeší se konvolucí(*), výsledek je ovlivněn velikostí konvolučního jádra
+        \item Medián - Nelze řešit konvolucí, je to pouze aditivní a multiplikativní operace. Ze seřazených hodnot se vybírá prostřední hodnota. Lze vybírat i kvartili atd. Nejen kvantili
+        \item Modus  
+        \item jiné funkce (min,max)
+    \end{itemize}
+    \item Bodové - Hodnota je vypočítána na základě téhož pixelu $f'(x, y) \xrightarrow{T} f(x, y), \quad \forall x, y \in \Omega(I)$ - Slouží k jasové korekci(každý pixel korigován 
+    samostatně), převodní charakteristika(všechny pixely korigovány stejně), roztažení histogramu.  
 \end{itemize}
+\subsubsection{Bodová jasová transformace}
+Kompenzace systematické chyby při pořizení obrazu(z důvodu: nerovnoměrné osvětlení, rozdílná citlivost prvků snímače,nedokonalá přenosová funkce). Pro korekci je nutné 
+určit degradační fci a předpokládat multiplikativní charakter poruchy.
+\begin{itemize}
+    \item g(x,y) = nekorigovaný obraz
+    \item e(x,y) = degradační funkce - modeluje poruchu, existují: Analytický model -aproximace poruchy analytickou plochou,dán obecně nelineární rovnicií určenou z apriorní explicitní
+    informace. Empirický - etalonový snímek, pořídí se snímek g(x,y) při explicitně určené scéně g'(x,y), funkce je pak určena podílem g/g'.
+    \item f(x,y) = korigovaný obraz 
+\end{itemize}
+$f(x,y) = e(x,y)*f(x,y)$
+
+Převodní charakteristika - transformace T jasové stupnice g vstupního obrazu na jasovou stupnici f výstupního obraz f = T(g). Implementace pomocí Lute
+
+\subsection{Ekvalizace histogramu} 
+= transofrmace jasové stupnice, po níž jsou jasové složky zastoupeny rovnoměrně - pro pozorovatele se to projeví zvýšením kontrastu. Definovaná normalizace pro jasové porovnávání
+dvou obrazových segmentů. 
+
+Cíl ekvalizace - Nalézt neklesající transformační funkci t na základě histogramů h (i) vstupního obrazu takovou, aby histogram g (i) výstupního obrazu byl uniformní na celém 
+intervalu hodnot jasu.
+\textbf{Vstup výpočtu} = histogram vstupního obrazu \\
+\textbf{Výstup výpočtu} = výstupní obraz
+\[
+\sum_{i = p_0}^{p_k} h(i) = \sum_{i = q_0}^{q_k} g(i)
+\]
+\[
+\Rightarrow \text{rozlišení snímku } M \times N \text{ se nemění}
+\]
+\[
+\approx \text{energie histogramů je stejná}
+\]
+\textbf{Histogram určen vstupním obrazem} \\
+$\approx$ libovolné rozložení
+
+\textbf{Ekvalizovaný histogram} \\
+$\approx$ uniformní rozložení
+
+\textbf{U diskrétního obrazu je teoretická výška čar:}
+\[
+n_u = \frac{M \cdot N}{q_k - q_0},
+\]
+\[
+\begin{cases}
+M, N = \text{rozměry obrazu} \\
+q \in \langle q_0; q_k \rangle = \text{definiční obor histogramu}
+\end{cases}
+\]
+Postup výpočtu ekvalizace : 1) histogram obrazu, 2) kumulovaný histogram 3) normalizace kumulovaného histogramu na převodní charakteristiku 4) transformace jasové stupnice. 
+
+\[
+q = \frac{q_k - q_0}{M \cdot N} \cdot h_k(p) + q_0
+      = k_1 \cdot h_k(p) + k_2
+\]
+
+
 \begin{figure}[h!]
  \centering
  \includegraphics[width=0.8\textwidth]{img/globalni.png}
@@ -191,6 +253,175 @@ Dělení jasových transformací:
  \begin{equation}
     h_k(q)=\sum_{i = 0}^{q} h(i) = h_k(q-1)+h(q)
  \end{equation}
+
+ \subsection{geometrická transformace}
+ Geometrická transformace = transformace souřadnic obrazových bodů a s ní spojená interpolace 
+ jasových hodnot. 
+\[
+f' = T(f) \rightarrow
+\begin{cases}
+(x, y)^T \rightarrow (x', y') \\
+f(x, y)^T \rightarrow f'(x', y')
+\end{cases}
+\]
+\begin{figure}[h]
+ \centering
+ \includegraphics[width=0.5\textwidth]{img/geom_tran.png}
+ \caption{Geometrické transformace}
+ \end{figure}
+
+ Při výpočtu geometrické transformace dochází k: 1) Transformacisouřadnic, mapování (x,y) na (x',y'). 2 ) k interpolací jasových hodnot - určení nové jasové hodnoty v místě
+ mimo ortogonální rastr.
+
+ Geometrické transformace převádí int na real, ale stále výsledek musí být v pravidelné vzorkovací mřížce.
+ Následkem je vznik děr a nejednoznačnost - na jednu pozice se mapuje více pixelů.
+
+Obecně geometrická transformace neexistuje, pokaždé se jedná o jejich aproximací
+
+\subsection{Aproximace}
+
+\[
+x' = \sum_{r=0}^{n} \sum_{k=0}^{\,n-r} a_{rk} \cdot x^{r} \cdot y^{k}
+\]
+\[
+y' = \sum_{r=0}^{n} \sum_{k=0}^{\,n-r} b_{rk} \cdot x^{r} \cdot y^{k}
+\]
+n - je voleno podle míry zkreslení , pokud v nekorigovaném obrazu nedochází k rychlým změnám souřadnic -> n <= 3
+\textbf{bilineární transformace: }
+(n=2)
+$x' = a_0 +a_1*x + a_2*y + a3*x*y$ pokracuje: $+a_4*x^2+a_5*y^2$
+$y' = b_0 +b_1*x + b_2*y + b3*x*y$ pokracuje: $+b_4*x^2+b_5*y^2$
+
+\textbf{Affinní transformace: }
+(n=1)
+$x' = a_0 +a_1*x + a_2*y$ 
+$y' = b_0 +b_1*x + b_2*y$
+
+Operace proveditelné zapomocí afinního tvaru:
+\begin{itemize}
+    \item posunutí : členy a0 a b0
+    \item rotace : členy a1,a2 a b1 a b2 (sin/cos)
+    \item měřítko : členy a1 a b2
+    \item zkosení : členy a2 a b1
+\end{itemize}
+\subsection{Homogenní souřadnice}
+– reprezentace bodu v prostoru o jednu dimenzi vyšším, než odpovídá skutečné dimenzi bodu
+
+\[
+P = 
+\begin{bmatrix}
+x \\ y
+\end{bmatrix}
+\quad \Rightarrow \quad
+P_H =
+\begin{bmatrix}
+\lambda x \\ \lambda y \\ \lambda
+\end{bmatrix},
+\qquad \lambda \neq 0
+\]
+
+Affinní transformace v homogenních souřadnicích:
+
+\[
+x' = a_0 + a_1 x + a_2 y
+\]
+\[
+y' = b_0 + b_1 x + b_2 y
+\]
+\[
+\begin{bmatrix}
+x' \\
+y' \\
+1
+\end{bmatrix}
+=
+\begin{bmatrix}
+a_1 & a_2 & a_0 \\
+b_1 & b_2 & b_0 \\
+0   & 0   & 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+x \\
+y \\
+1
+\end{bmatrix}
+\]
+
+\subsection{Interpolace souřadnic}
+Výstupní obraz musí mít stejně jako vstupní pevnou rastrovou mřížku. Dochází k neceločíselným souřadnicím, tím pádem nejde přesně určit jasovou hodnotu a proto je nutné interpolovat
+Metody interpolace:
+\begin{itemize}
+    \item nejbližší soused
+    \item statistika - N nejbližších sousedů (často prostý průměr 4 nejbližších sousedů)
+    \item lineární / bilineární/trilineární interpolace (tj. linearizace 1D/2D/3D)
+    \item kubická/bikubická/trikubická interpolace (tj. polynomizace signálu v 1D/2D/3D)
+\end{itemize}
+Peostě popis jak fungujou konkrétní interpolace..
+\subsection{Korekce zkreslení}
+
+
+\text{aproximujeme analytickou funkcí odpovídající předpokládanému zkreslení.}
+
+\subsubsection{Radiální zkreslení (soudek, poduška)}
+r = \text{radiální vzdálenost bodu } (x, y) \text{ od středu obrazu (nebo jiného vztažného bodu).}
+\[
+x' = x \cdot \left( 1 + \kappa_1 r^2 + \kappa_2 r^4 + \kappa_3 r^6 \right)
+\]
+\[
+y' = y \cdot \left( 1 + \kappa_1 r^2 + \kappa_2 r^4 + \kappa_3 r^6 \right)
+\]
+\subsubsection*{Tangenciální zkreslení (perspektiva)}
+\[
+x' = x + 2\rho_1 y + \rho_2 (r^2 + 2x^2)
+\]
+\[
+y' = y + 2\rho_2 x + \rho_1 (r^2 + 2y^2)
+\]
+
+
+\subsection{Rotace}
+
+\subsubsection*{Otočení obrazu o 90°, 180° a 270°}
+\begin{itemize}
+    \item záměna řádků a sloupců
+    \item nedochází ke zkreslením, tj. $\mathrm{rot}(90^\circ) \neq \mathrm{rot}(\mathrm{rot}(45^\circ))$
+\end{itemize}
+
+\subsubsection*{Otočení obrazu o libovolný úhel $\alpha$ – definice}
+\[
+x' = a_0 + a_1 x + a_2 y
+\]
+\[
+y' = b_0 + b_1 x + b_2 y
+\]
+kde 
+\[
+\{a_0, b_0\} \rightarrow 0, \qquad 
+\{a_1, a_2, b_1, b_2\} \rightarrow \{\sin, \cos\}
+\]
+\[
+\Downarrow
+\]
+\[
+\begin{bmatrix}
+x' \\
+y' \\
+1
+\end{bmatrix}
+=
+\begin{bmatrix}
+\cos \alpha & -\sin \alpha & 0 \\
+\sin \alpha & \cos \alpha & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+x \\
+y \\
+1
+\end{bmatrix}
+\]
 
 
 
