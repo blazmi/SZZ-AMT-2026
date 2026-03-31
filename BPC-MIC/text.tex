@@ -516,11 +516,11 @@ Princip: Pokud je směr magnetického pole proměnné feromagnetické vrstvy (pl
 Čtení stavu bitu se provádí prostřednictvím jedné společné elektrody a menší speciální čtecí elektrody napojené na protější stranu vertikální struktury.\\
 Zapsaný stav 1 - buňka má větší odpor a naopak.\\
 
-\section{Princip a vlastnosti statických pamětí RAM (SRAM) a dynamických pamětí RAM (DRAM), synchronní paměti DRAM (SDRAM).
+\section{Princip a vlastnosti statických pamětí RAM (SRAM) a synchronních dynamických paměti DRAM (SDRAM).
   Připojování paralelních pamětí SRAM, FLASH ke sběrnicím mikroprocesoru. Adresový dekodér.
   Hierarchie paměti, paměti cache, specializované paměti cache.}
 
-\subsection{SRAM, DRAM a SDRAM}
+\subsection{SRAM a SDRAM}
 \subsubsection*{SRAM - Statická RAM}
 Paměťová buňka tvořena bistabilním klopným obvodem.\\
 Paměťová buňka je rychlá, ale velká – tvořena 6 tranzistory.\\
@@ -530,23 +530,6 @@ Snadné připojení k CPU.\\
 \begin{figure}[h!]
     \centering
     \includegraphics[scale = 0.3]{img/SRAM.png}
-\end{figure}
-
-\subsubsection*{DRAM - Dynamická RAM}
-K zapamatování informace využívá náboj na kondenzátoru o kapacitě řádově desítky fF (femtofarad \(10^{-15}\) F).\\
-Paměťová buňka je malá - 1 tranzistor a 1 kondenzátor.\\
-Náboj v kondenzátoru je třeba obnovovat, aby nedošlo ke ztrátě informace. Tomuto se říká refresh, je nutno jej provádět každých 64ms\\
-Na stejné ploše čipu má DRAM větší kapacitu, než SRAM => nižší cena za 1 bit u paměti SRAM.\\
-Kondenzátor se při zápisu nabije nebo vybije přes jednoduchý spínač MOSFET a po určitou dobu udržuje náboj.\\
-Napětí na kondenzátoru lze během čtení porovnat s referenčním napětím a rozlišit stav 1 a 0.\\
-Adresa do paměti se zavádí ve dvou krocích:
-\begin{itemize}
-    \item Impulsem RAS\ se zapíše adresa do řádkového registru
-    \item Impulsem CAS\ se zapíše adresa do sloupcového registru
-\end{itemize}
-\begin{figure}
-    \centering
-    \includegraphics[scale = 0.3]{img/DRAM.png}
 \end{figure}
 
 \subsubsection*{SDRAM}
@@ -574,7 +557,6 @@ Adresa je tvořena:
     \item WE\ - write enable
     \item CS\ - chip select - slouží pro výběr paměťového čipu
 \end{itemize}
-\newpage
 \begin{figure}[h!]
     \centering
     \includegraphics[scale = 0.3]{img/MemConnect.png}
@@ -637,78 +619,135 @@ Většina moderních procesorů má alespoň 3 nezávislé cache.\\
     \item TLB cache - Translation look-aside buffer cache, zrychluje překlad fyzických adres na fyzické
 \end{itemize}
 
-\section{Pojem logická a fyzická adresa, ochrana paměti, memory management unit (MMU). Stránkování (princip, transformace logické adresy na fyzickou, stránkovací tabulka). Virtuální adresový prostor. Zrychlení překladu adres pomocí Translation Look-aside Buffer (TLB).}
+\section{Zdroje hodinových impulsů pro mikrokontroléry, jejich parametry. Fázový závěs (blokové schéma, funkce, důvody použití). Princip a použití watch dog. Komunikační rozhraní UART, SPI a IIC.}
 
-MMU - memory mamangement unit. \\
-\subsection{Abstrakce paměti}
-\subsubsection*{Žádná abstrakce paměti}
-Každý proces vidí přímo fyzickou adresu.\\
-Paměťový model s kterým pracuje uživatel je fyzická adresa - množina adres od 0 do maximální hodnoty paměti.\\
-Využívají kontroléry.\\
-\subsubsection*{Abstraktovaná paměti}
-Každý proces má svůj vlastní adresový prostor.\\
-Musí se zajistit aby stejné adresy v různých procesech odpovídaly jiným fyzickým adresám.\\
-
-\subsection{Logická adresa}
-Adresa virtuální s níž pracuje programátor.\\
-U jednoduchých procesorů zajišťuje jejich generování přímo procesor. U složitějších procesorů zajišťuje MMU.
-
-\subsection{Fyzická adresa}
-Reálná adresa na sběrnici, se kterou pracuje MMU.\\
-Na vývodech procesoru je 20-bitová fyzická adresa, která se vytváří tak, že se obsah segmentového registru posune o 4 bity doleva a k ní se lineárně přičte offset.
-Takto je vytvořen rozsah fyzických adres 0-FFFFFH (0-1MB).\\
-Vzniknou překladem logických adres v MMU.\\
-
-\subsection{Ochrana paměti}
-\subsubsection*{Segmentace}
-Mechanismus správy paměti, který odpovídá uživatelskému pohledu na paměť. \\
-Každý program obsahuje data (proměnné), instrukce (kód) a zásobník.\\
-Uvedené části programu mají svoje specifické vlastnosti a lze je považovat za relativně samostatné. Proto je lze od sebe oddělit a lze je ukládat do samostatných oblastí paměti, které nazýváme segmenty.\\
-Logická adresa segmentu je tvořena dvojicí < číslo segmentu : offset>. Číslo segmentu - určuje začáteční adresu segmentu, nachází se v příslušném segmentovém registru.\\
-Z důvodu bezpečnosti pracuje se segmentovými registry a s tabulkami hlavně operační systém, uživatelský program pouze určuje offsetovou část adresy.\\
-
-\subsubsection*{Spojitá alokace}
-Rozdělení na pevné délky paměti pro každý proces.
-Neefektivní, vznikají prázdná místa v paměti.
-
-\subsubsection*{Memory Management Unit}
-Zajišťuje oddělení logického a fyzického  adresového prostoru.\\
-Ochranu paměti - vzájemné izolování uživatelských procesů, izolování jádra OS a uživatelských procesů.\\
-Obsahuje relokační registry.\\
-Jednoduché procesory nemají MMU a pracují přímo s fyzickými adresami.\\
-
-\subsubsection*{Stránkování}
-Logický prostor je rozdělen na části stejné velikosti, takzvané stránky. Obvyklá velikost je 4KB.\\
-Fyzická paměť je rozdělena na rámce. Velikost rámce je stejná jako velikost stránky. \\
-Logická adresa se skládá z offsetu, který určuje vzdálenost od začátku stránky a čísla stránky, který určuje číslo stránky. Položky tabulky stránek určují číslo rámce.\\
-Položka obsahuje příznak přítomnosti/nepřítomnosti stránky ve fyzické paměti. Realizace pomocí jednoho bitu. Když se nenachází, generuje přerušení (page fault) a OS musí zajistit přesunutí stránky do fyzické paměti z pevného disku.\\
-Bity ochrany určují jaké operace jsou se stránkou povoleny. V jednodušším případě pouze 1 bit, 0 je R/W a 1 je pouze R. Sofistikovanější využívá 3 bity, bit povolující čtení, zápis a spouštění kódu ve stránce. \\
-Bit odkazu na stránku se nastavuje vždy když je stránka čtena, nebo je do ní zapsáno. Bit pomáhá OS rozhodnout, kterou stránku uvolnit z fyzické paměti, když jsou zaplněny všechny rámce a je požadováno do fyzické paměti umístit další stránku. \\
+\subsection{Zdroje hodinových impulsů pro mikrokontroléry}
+Každý synchronní sekvenční logický obvod potřebuje být taktován hodinovými impulsy. Hodinové impulsy potřebuje pro svoji činnost jádro (CPU) i periferie. PC, notebooky, servery mají na základní desce krystalový oscilátor, procesor je buzen impulsy z tohoto externího oscilátoru. 
+Mezi zdroje hodinovývh impulsů žadíme:
+\begin{itemize}
+    \item Externí zdroje: Obvykle krystalový oscilátor umístěný vně čipu.
+    \item Znitřní zdroje: 
+    \begin{itemize}
+        \item Vnitřní RC oscilátor (méně přesný, ale nevyžaduje externí součástky).
+        \item Vnitřní ring oscilátor (využívá se většinou pouze po prvotní inicializaci mikrokontroléru).
+        \item Vnitřní krystalový oscilátor s vnějším krystalem nebo keramickým rezonátorem.
+    \end{itemize}
+\end{itemize}
+Nejpoužívanější jsou krystalové (piezoelektrické) rezonátory. Využívají nepřímý piezoelektrický jev, kdy vnější elektrické pole deformuje krystal a při shodě s frekvencí vlastních kmitů dochází k mechanické rezonanci. Krystaly nabízí vysokou teplotní stabilitu a obrovský činitel jakosti ($Q$) oproti běžným LC obvodům.
+\subsubsection{Oxterní zdroje}
+Jedná se o zdroje, které jsou umístěny zcela mimo čip mikrokontroléru.Nejčastěji jde o hotové modulové krystalové oscilátory, které generují přímo hodinový signál.
+\subsubsection{Vnitřní RC oscilátor}
+Používá se v aplikacích, kde se nevyžaduje vysoká přesnost ani stabilita kmitočtu.Tolerance frekvence se pohybuje kolem ±1 \% a teplotní stabilita je typicky ±100 ppm/°C. Má ze všech možností tu nejmenší velikost a velmi nízkou cenu
+\subsubsection{Vnitřní ring oscilátor}
+Je složen z lichého počtu za sebou zapojených invertujících hradel (invertorů). Čím více hradel je v kruhu zapojeno, tím větší je celkové zpoždění signálu a tím nižší je výsledný kmitočet oscilací. Tento typ se obvykle používá pouze bezprostředně po prvotní inicializaci mikrokontroléru, než naběhnou přesnější zdroje hodin.
 \begin{figure}[h!]
     \centering
-    \includegraphics[scale = 0.5]{img/Strankovani.png}
+    \includegraphics[width = 0.5\textwidth]{img/RingOsc.png}
 \end{figure}
+\subsubsection{Vnitřní krystalový oscilátor s vnějším rezonátorem}
+Aplikace, pro, které je krystalový rezonátor zbytečný, ale RC oscilátor už nevyhoví. Zesilovač nutný pro vznik oscilací je integrován uvnitř mikrokontroléru, ale frekvenčně určující součástky (krystal nebo keramický rezonátor, a k nim případně kondenzátory a rezistory) se připojují zvenčí na piny čipu.
 
-\subsubsection*{Víceúrovňové stránkovací tabulky}
-Většina dnešních počítačových systémů umožňuje pracovat s logickým adresovým prostorem od $2^{32}$ do $2^{64}$.
-Logickou adresu o velikosti 32 bitů můžeme například rozdělit na 3 části: 10 bitové pole PT1 představující index do stránkovací tabulky první úrovně, 10 bitové pole PT2 představující index do stránkovací tabulky druhé úrovně a 12 bitový offset v rámci stránky. Stránkovací tabulka první úrovně má \(2^{10}\) = 1024 položek. Každá stránkovací tabulka druhé úrovně má také 1024 položek, přitom položka tabulky reprezentuje stránku o velikosti \(2^{12}\) = 4096 B. Každá tabulka druhé úrovně tedy reprezentuje paměťový prostor 1024*4096 = 4MiB.
+\subsection{Parametry zdrojů hodinových impulsů}
+\begin{itemize}
+    \item Jmenovitý (nominální) kmitočet
+    \begin{itemize}
+        \item Jedná se o kmitočet, který je výslovně uveden přímo na pouzdře krystalu.
+        \item Krystal je už při samotné výrobě určen pro práci buď na sériovém, nebo na paralelním rezonančním kmitočtu, což se vždy uvádí v katalogovém listu.
+        \item Pokud je krystal zkonstruován pro práci na vyšší harmonické frekvenci, je na pouzdře uvedena hodnota této vyšší harmonické.
+    \end{itemize}
+    \item Tolerance kmitočtu
+    \begin{itemize}
+        \item Tento parametr udává maximální odchylku reálného kmitočtu od jmenovitého (nominálního) kmitočtu při referenční teplotě 25 °C.
+        \item Typické hodnoty tolerance se pohybují v úrovních ±10 ppm, ±20 ppm, ±50 ppm a ±100 ppm (ppm - parts per milion).
+    \end{itemize}
+    \item Stabilita kmitočtu
+    \begin{itemize}
+        \item Stabilita definuje maximální odchylku kmitočtu od referenční hodnoty (změřené při 25 °C) v celém rozsahu pracovních teplot daného zařízení.
+        \item Podobně jako u tolerance, typické hodnoty jsou ±20 ppm, ±50 ppm a ±100 ppm v celém teplotním rozsahu (což může být například od -40 °C do 85 °C).
+    \end{itemize}
+    \item Stárnutí (Aging)
+    \item \begin{itemize}
+        \item Stárnutí popisuje přirozenou změnu rezonančního kmitočtu krystalu v průběhu času.
+        \item Změna mechanického namáhání: Po pevněm připájení na desku plošného spoje je krystal mechanicky pnut, postupem času se toto namáhání zmenšuje, což mění frekvenci.
+        \item Kontaminace: Během času mohou mikroskopické nečistoty z povrchu krystalu odpadnout, nebo na něj naopak dopadnout, což změní jeho hmotnost a rezonanční kmitočet.
+        \item Buzení: Nižší budicí výkon efekt stárnutí zpomaluje. Naopak přebuzení krystalu může stárnutí extrémně urychlit (např. 1 měsíc přebuzení rovná se 1 roku stárnutí).
+        \item Efekt stárnutí se s postupujícím časem snižuje. Nejvíce krystal "stárne" během úplně prvního roku svého provozu (typicky pod 5 ppm/rok).
+    \end{itemize}
+    \item Výkonové zatížení (Drive Level)
+    \item \begin{itemize}
+        \item Je to maximální výkon, který se smí v krystalu přeměnit v teplo a rozptýlit, aniž by došlo k jeho poškození nebo posunu kmitočtu.
+        \item Běžné hodnoty jsou 5 µW pro nízké kmitočty pod 100 kHz a zhruba 1 mW pro kmitočty 1 až 30 MHz. Krystaly pracující na vyšších harmonických snesou 1 až 2 mW.
+    \end{itemize}
+\end{itemize}
 
+\subsection{Fázový závěs}
+Krystalové a keramické rezonátory mají fyzikálně omezený maximální kmitočet. Z hlediska elektromagnetické kompatibility (EMC) je mnohem vhodnější mít na desce vnější oscilátor o nízkém kmitočtu, který tolik nevyzařuje. Zároveň ale samotný procesor a jeho periferie vyžadují pro svůj výpočetní výkon kmitočet vysoký.
+Fázový závěs umožňuje násobit (a obecně i dělit) vstupní kmitočet racionálním číslem. Výstupní frekvence je dána vztahem $f_2 = \frac{N}{M} f_1$
 \begin{figure}[h!]
     \centering
-    \includegraphics[scale = 0.5]{img/str2.png}
+    \includegraphics[width =\textwidth]{img/PLL.png}
 \end{figure}
 
-\subsubsection*{Virtuální adresový prostor}
-Oddělení uživatelské logické paměti od fyzické paměti.\\
-Metoda zvětšení fyzické paměti ukládáním na pevný disk.\\
-Získáme větší prostor než kolik je velikost RAM. Ukládání je velmi pomalé, proto ukládáme pouze to co se nevejde do RAM, nebo je velmi malé.\\
-U virtuální paměti se ukládají jen části procesů, kdyby šlo o swapping tak se ukládají celé procesy.\\
+\subsection{Watchdog}
+\subsubsection{Účel a princip činnosti}
+Jeho hlavním úkolem je hlídat, aby procesor neuvízl v nekonečné smyčce nebo „nezabloudil“ (tzv. runaway code).K takovému chybovému stavu může dojít buď chybou v softwaru, nebo hardwarovým problémem (například když rušení nechtěně přepíše obsah paměti).
+Hardwarovým základem je čítač, který odpočítává. Pokud tento čítač dosáhne hodnoty 0, automaticky vyvolá RESET celého mikrokontroléru.
+\subsubsection{Pasivace (tzv. „krmení psa“)}
+Aby k resetu nedošlo, musí běžící program pravidelně tento čítač nastavovat zpět na jeho výchozí hodnotu ještě předtím, než stihne dosáhnout nuly. Toto „krmení psa“ (pasivace) se obvykle provádí zápisem libovolné hodnoty nebo definované sekvence hodnot do příslušného registru.
+Zápis pro pasivaci psa nemá absolutně smysl provádět uvnitř přerušovací rutiny. (Důvodem je to, že i když hlavní program zamrzne, časovač přerušení může stále běžet, psa dál krmit, a zařízení by se nikdy neresetovalo).
 
-\subsubsection*{Translation look-aside buffer}
-Slouží ke zrychlení překladu logické adresy na fyzickou. \\
-Bez TLB se musíme podívat do paměti 2x, podívání do stránkovací tabulky a podívání do paměti.\\
-Typ cache paměti.\\
-Jsou v něm uloženy posledně používané lineární adresy a jejich odpovídající fyzické adresy.\\
-Nová adresa se prvně hledá v TLB.\\
-Většina programů provádí velké množství odkazů do malého počtu stránek.\\
-Je součástí MMU.\\
+\subsection{UART(Universal Asynchronous Receiver-Transmitter)}
+Jde o asynchronní sériovou komunikaci. To znamená, že hodinový signál se nepřenáší mezi přijímačem a vysílačem; obě komunikující strany musí mít svůj vlastní, nezávislý zdroj hodin.Využívá pouze tři vodiče: Tx (vysílaná data), Rx (přijímaná data) a společnou zem GND .
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width =\textwidth]{img/UART.png}
+\end{figure}
+
+Komunikace je plně duplexní, tj. data lze odesílat i přijímat současně. Přenosové rychlosti se udávají v baudech (Bd - počet bitů za sekundu), přičemž velmi často používaná hodnota je 9600 Bd. Datový rámec se skládá se ze Start bitu, 8 datových bitů, volitelného paritního bitu (sloužícího k detekci poškození jednoho bitu) a Stop bitu .
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width =\textwidth]{img/UARTframe.png}
+\end{figure}
+
+\subsection{SPI(Serial Peripheral Interface)}
+Jde o synchronní komunikaci plně řízenou z pozice Master zařízení.Základem jsou posuvné registry v Masteru i ve Slave.
+S každým hodinovým taktem se vysunuje bit z jednoho zařízení a nasouvá do druhého. Během 8 taktů tak dojde ke kompletní vzájemné výměně bajtů mezi Masterem a vybraným Slavem .
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width =\textwidth]{img/SPI.png}
+\end{figure}
+Připojení více Slave zařízení: Master vybírá konkrétního Slave tak, že mu aktivuje úroveň na lince SS. Ostatní zařízení s neaktivní úrovní SS musí sběrnici ignorovat.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width =0.5\textwidth]{img/SPImulti.png}
+\end{figure}
+
+\FloatBarrier
+\subsection{I2C / IIC (Inter-Integrated Circuit)}
+Synchronní sériová sběrnice původně vyvinutá firmou Philips pro komunikaci mezi čipy na jedné desce. Vystačí si pouze se 2 signálovými vodiči: SDA (data) a SCL (hodiny generované Masterem).
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width =0.5\textwidth]{img/I2C.png}
+\end{figure}
+Výstupy zařízení musí být zapojeny jako "otevřený kolektor" (Open Drain) a sběrnice musí být vytažena k napájení přes pull-up rezistory. Nízká úroveň (0V) je tzv. dominantní (kterékoliv zařízení může stáhnout sběrnici dolů) a vysoká úroveň je recesivní (pokud nikdo nevysílá nulu, rezistory stáhnou sběrnici nahoru) .
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width =\textwidth]{img/I2Cframe.png}
+\end{figure}
+Každá transakce začíná tzv. Start condition (SDA padá dolů zatímco SCL drží vysoko) generovanou Masterem.
+
+Sběrnice využívá adresní rámec - každý Slave má svou unikátní 7 nebo 10bitovou adresu. První odeslaný bajt obsahuje tuto adresu a bit určující, zda bude Master následně data číst, nebo zapisovat.
+
+Po odeslání adresního rámce následuje samotný přenos dat, který probíhá vždy v blocích o délce 8 bitů (1 bajt).
+
+Každý bajt na sběrnici musí příjemce potvrdit pomocí bitu ACK (Acknowledge) přidržením vodiče SDA na nízké úrovni.
+
+Aby zařízení Master ukončil probíhající komunikaci a uvolnil sběrnici, musí vygenerovat tzv. Stop condition.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width =\textwidth]{img/I2Ccond.png}
+\end{figure}
+
+Existuje i speciální případ. Pokud chce Master okamžitě vyslat další zprávu (např. po odeslání adresy chce hned číst data) a nechce přitom uvolnit sběrnici (aby mu ji "neukradl" jiný Master), Stop condition vůbec nevyšle. Místo toho rovnou vygeneruje novou Start condition na sběrnici.
+
+
