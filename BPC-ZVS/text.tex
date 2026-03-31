@@ -427,3 +427,298 @@ y \\
 
 \section{Morfologické operace a integrální transformace (využití FT pro zpracování vícerozměrných signálů - vzorce,
 vlastnosti, výhody a nevýhody, typy a tvorba filtrů, korelace a autokorelace).}
+
+\subsection{Morfologické operace}
+= náuka o tvarech
+
+Matematická morfologie vychází z vlastností bodových množin. Nečastěji se aplikuje na binární obrazy, ale lze ji snadno zobecnit i na šedotónové a barevné obrazy. Morfologické operace se používají pro předzpracování (odstranění šumu, zjednodušení tvaru objektů), zdůraznění struktury objektů (kostra, ztenčování, zesilování, konvexní obal, označování objektů) a pro popis objektů číselnými charakteristikami (plocha, obvod, projekce, atd.).
+
+Morfologické operace jsou realizovány jako relace obrazu (bodové množiny X) s jinou menší bodovou množinou B, tzv. strukturním elementem. Morfologickou transformaci si lze 
+představit jako určitý systematický pohyb strukturního elementu B po obrazu X a vyhodnocení odezvy podle typu operace.
+
+\subsubsection{Dilatace}
+vektorový součet množin I a B
+$I \oplus B = \{\, p \in E^2 \mid p = i + b,\ \forall i \in I,\ \forall b \in B \,\}$
+
+\begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/dilatace.png}
+ \caption{Příklad dilatace od clauda}
+ \vspace{-5mm}
+ \end{figure}
+
+ \subsubsection{Eroze}
+ $I \ominus B = \{\, p \in E^2 \mid p + b \in I \ \forall b \in B \,\}$
+
+ Pixel zůstane v obraze jen pokud "celé" razítko najde aktivní pixeli. Pokud ne jsou odebrány.
+ Erozí jsme schopní získat obrys obrazu, pokud budeme postupovat dle rovnice $ O = I - (I\ominus B)$
+ 
+ \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/eroze.png}
+ \caption{Příklad eroze od clauda}
+ \vspace{-5mm}
+ \end{figure}
+
+\begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/obrys.png}
+ \caption{Zisk obrysu}
+ \vspace{-5mm}
+ \end{figure}
+ 
+ \subsubsection{Uzavření}
+ Eroze a dilatace nejsou inverzní operace, takže jejich sloučením získáváme nové morfologické operace
+ Konkrétně pokud nejdříve provedeme dilataci a pak erozi získáváme uzavření. Spojuje objekty a zapňuje mezery. Získáváme jednodušší obrazce. 
+
+ $I \bullet B = (I \oplus B) \ominus B$
+
+ \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/uzavreni.png}
+ \caption{Zisk uzavreni}
+ \vspace{-5mm}
+ \end{figure}
+
+ \subsubsection{Otevření}
+ Jedná se o operaci eroze následovanou dilataci. Výhodou je odstranění tenkých čar a šumů. Míra odstranění je dána tvarem a strukturou 
+  $I \bullet B = (I \ominus B) \oplus B$ 
+  \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/otevreni.png}
+ \caption{Zisk otevreni}
+ \vspace{-5mm}
+ \end{figure}
+
+ \subsubsection{Skelet}
+ Skelet S(I) je reprezentace objektů v obrazu I za pomoci tenkých čar. 
+ Kostra objektu (skelet) vytvořená pomocí operací dilatace a eroze může být složena z čar širších, 
+něž jeden bod. Z tohoto důvodu se skelet aproximuje kostrou objektu získanou pomocí sekvenčního 
+ztenčování (viz dále).
+"Formálně každá iterace udělá toto: vezme aktuální obraz, eroduje ho, a zachytí pixely které eroze smazala, ale uzavření by je obnovilo — to jsou pixely "na středové ose". Tyhle se přidají do skeletu a pokračuje se s erodovaným obrazem."
+  \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/skelet.png}
+ \caption{Zisk skeletu}
+ \vspace{-5mm}
+ \end{figure}
+
+ \subsubsection{Tref či miň}
+ Tref či miň se mj. používá pro operace ztenčování a zesilování bodových množin
+ $I \otimes B = (I \ominus B_1) \cap (I^{C} \ominus B_2)
+             = (I \ominus B_1) \mid (I \oplus B_2)$
+Transformace tref či miň („hit or miss“ nebo Serrova tr.) pracuje na principu vyhledávání shody 
+mezi bodovou množinou binárního obrazu I a definovaným složeným strukturním elementem B:
+Sub-element B1 reprezentuje vyžadované body náležející objektu (  ), sub-element B2 vyžadované 
+body náležející pozadí (  ) a na zbylých pozicích (  ) při výpočtu transformace nezáleží:
+
+Transformace pak zachovává ty body z množiny I, které odpovídají (jsou přítomny) sub-elementu 
+B1 a současně neodpovídají (nejsou přítomny) sub-elementu B2 a je matematicky definována
+
+\subsubsection{Ztenčování}
+Ztenčování bodové množiny binárního obrazu I složeným strukturním elementem B je definováno:
+$I \ominus B = I \mid (I \otimes B)$
+ \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/ztenceni.png}
+ \caption{Ztenčeni}
+ \vspace{-5mm}
+ \end{figure}
+
+\subsubsection{Zesilování}
+podobné jako ztenčení jen opak
+$I \odot B = I \cup (I \otimes B)$
+Sekvenční zesilování s jednou, pěti a neomezeným počtem iterací (konverguje do dosažení 
+idempotence) s konstantním složeným strukturním elementem
+  \begin{figure}[h!]
+ \vspace{-5mm}
+ \centering
+ \includegraphics[width=0.7\textwidth]{img/zesileni.png}
+ \caption{Zesílení}
+ \vspace{-5mm}
+ \end{figure}
+
+
+\subsubsection{Golayova abeceda}
+Golayova abeceda je skupina významných složených strukturních elementů s definovaným použitím.
+Mezi základní elementy Golayovy abecedy patří: L, E, M, D, C
+Jedničky v masce odpovídají sub-elementu B1(objekty), nuly sub-elementu B2(okolí) a hvězdičky 
+prvkům, které nejsou pro operaci relevantní (nejsou vůbec počítány)
+
+Note: uprimne nevim co k tomu napsat
+
+\section*{Definice a základní pojmy}
+ 
+Integrální transformace jsou \textbf{lineární, bezztrátové operátory} převodu signálu z~prostorové (časové) domény do jiné báze. Obecný tvar přímé a zpětné transformace:
+ 
+\[
+  F(u) = c \cdot \int f(x)\,\psi(x,u)\,dx
+  \qquad
+  f(x) = C \cdot \int F(u)\,\psi^{-1}(x,u)\,du
+\]
+ 
+kde $\psi(x,u)$ je \textbf{integrální jádro} (bázová/generující funkce, kernel) a $C$ je korekční koeficient kompenzující změnu „energie" při transformaci. Výsledkem je rozklad signálu na sumu jednodušších funkcí tvořících \textbf{ortonormální bázi}.
+ 
+% -------------------------------------------------------
+\section*{Výhody a nevýhody}
+ 
+\textbf{Výhody:}
+\begin{itemize}
+  \item Konvoluce v prostorové doméně odpovídá \emph{násobení} ve frekvenční doméně — výrazně jednodušší realizace zejména pro velké filtry.
+  \item Filtry lze libovolně spojovat (asociativita, komutativita), nezáleží na pořadí jejich aplikace.
+  \item Umožňuje přímou práci s~frekvencemi: odstranění rušení, zjištění podílu šumu, analýza periodicity.
+\end{itemize}
+ 
+\textbf{Nevýhody:}
+\begin{itemize}
+  \item Nutnost převodů mezi bázemi (přímá + zpětná transformace).
+  \item Pouze \emph{lineární} operace — nelze přímo realizovat nelineární filtry.
+  \item Periodicita signálu způsobuje artefakty na okrajích obrazu (přesah filtru přes okraj).
+\end{itemize}
+ 
+% -------------------------------------------------------
+\section*{Fourierova transformace (FT) — vzorce}
+ 
+\subsection*{1D — spojitá a diskrétní varianta}
+ 
+\[
+  F(\omega) = \int_{-\infty}^{\infty} f(t)\cdot e^{-i\omega t}\,dt
+  \qquad
+  f(t) = \frac{1}{2\pi}\int_{-\infty}^{\infty} F(\omega)\cdot e^{i\omega t}\,d\omega
+\]
+ 
+Diskrétní FT (DFT) pro $N$ vzorků:
+\[
+  F(k) = \sum_{n=0}^{N-1} f(n)\cdot e^{\frac{-2\pi i \cdot k \cdot n}{N}}
+  \qquad
+  f(n) = \frac{1}{N}\sum_{k=0}^{N-1} F(k)\cdot e^{\frac{2\pi i \cdot k \cdot n}{N}}
+\]
+ 
+\subsection*{2D — pro zpracování obrazu}
+ 
+2D FT je \textbf{separabilní} — provede se jako dva nezávislé 1D průchody (po řádcích a po sloupcích). Generující funkce:
+\[
+  e^{j2\pi(ux+vy)} = \cos 2\pi(ux+vy) + j\sin 2\pi(ux+vy)
+\]
+ 
+Přímá a zpětná 2D DFT pro obraz $M \times N$:
+\[
+  F(u,v) = \frac{1}{MN}\sum_{y=0}^{M-1}\sum_{x=0}^{N-1} f(x,y)\cdot
+    \exp\!\left(\frac{-2\pi i \cdot x \cdot u}{N} + \frac{-2\pi i \cdot y \cdot v}{M}\right)
+\]
+\[
+  f(x,y) = \sum_{v=0}^{M-1}\sum_{u=0}^{N-1} F(u,v)\cdot
+    \exp\!\left(\frac{2\pi i \cdot x \cdot u}{N} + \frac{2\pi i \cdot y \cdot v}{M}\right)
+\]
+ 
+kde $F(u,v)$ je frekvenční spektrum obrazu, $u,v$ jsou frekvenční souřadnice a $M,N$ jsou rozměry obrazu.
+ 
+% -------------------------------------------------------
+\section*{Vlastnosti FT}
+ 
+\begin{itemize}
+  \item \textbf{Symetrie spektra:} $F(\omega) = F^*(-\omega)$; amplitudové spektrum $|F(\omega)|$ je sudá funkce, fázové spektrum $\arg\{F(\omega)\}$ je lichá funkce.
+  \item \textbf{Energie (výkonové spektrum):} $E\{F(\omega)\} = |F(\omega)|^2$.
+  \item \textbf{Periodicita:} Diskrétní periodický signál $\Leftrightarrow$ diskrétní periodické spektrum.
+  \item \textbf{Ss složka} (čára) se zobrazí na bod ve spektru; naopak bod (Dirakův pulz) se zobrazí na čáru (šum je tedy širokospektrální).
+  \item \textbf{Změna měřítka (Similarity):} $f(ax, by) \Leftrightarrow \frac{1}{ab}F\!\left(\frac{u}{a}, \frac{v}{b}\right)$.
+  \item \textbf{Posun (Shift):} $f(x-a, y-b) \Leftrightarrow e^{j2\pi(au+bv)}F(u,v)$ — posun v~prostoru = fázový posuv ve spektru.
+  \item \textbf{Rychlá realizace (FFT):} Standardní DFT má složitost $\mathcal{O}(N^2)$, FFT ji snižuje na $\mathcal{O}(N \log_2 N)$.
+\end{itemize}
+ 
+\subsection*{Frekvenční obsah obrazu}
+ 
+Ve 2D spektru (po posunutí středu — \emph{fftshift}) platí:
+\begin{itemize}
+  \item \textbf{Střed spektra} — nízké frekvence: hrubá struktura, průměrný jas.
+  \item \textbf{Okraj spektra} — vysoké frekvence: hrany, detaily, šum.
+  \item \textbf{Směr} energie ve spektru odpovídá orientaci struktur v~obraze.
+\end{itemize}
+ 
+% -------------------------------------------------------
+\section*{Typy a tvorba filtrů}
+ 
+Filtrace ve frekvenční doméně probíhá jako násobení spektra obrazu $F(u,v)$ spektrem filtru $H(u,v)$ a zpětná transformace:
+\[
+  G(u,v) = F(u,v) \cdot H(u,v)
+  \qquad\Leftrightarrow\qquad
+  g(x,y) = f(x,y) * h(x,y)
+\]
+ 
+\subsection*{Základní typy filtrů}
+ 
+\textbf{Dolnofrekvenční (low-pass)} — potlačí vysoké frekvence (hrany, šum), výsledkem je rozmazání:
+\begin{itemize}
+  \item \emph{Obdélníkový:} $F(v) = 1$ pro $v \le v_N$, jinak $0$ — má ostrou hranu, způsobuje Gibbsův jev (vlnění).
+  \item \emph{Kosínový:} $F(v) = \cos\!\left(\frac{\pi v}{v_N}\right)$ pro $v \le v_N$.
+  \item \emph{Hammingův:} $F(v) = \alpha + (1-\alpha)\cos\!\left(\frac{\pi v}{v_N}\right)$, kde $\alpha \in [0,1]$.
+  \item \emph{Butterworth n-tého řádu:} $F(v) = \dfrac{1}{1 + \left(\frac{v}{v_N}\right)^{2n}}$ — plynulý přechod, řád $n$ určuje strmost.
+  \item \emph{Gaussův:} odvozený od Gaussovy křivky — doporučený tvar, protože nemá ostré hrany a jeho FT obraz je opět Gaussova funkce.
+\end{itemize}
+ 
+\textbf{Vysokofrekvenční (high-pass)} — potlačí nízké frekvence, zvýrazní hrany a detaily.
+ 
+\textbf{Pásmový filtr} — propustí pouze zvolené frekvenční pásmo.
+ 
+\textbf{Směrový filtr} — propustí pouze frekvence určité orientace ve 2D spektru.
+ 
+\subsection*{Zásady tvorby filtrů}
+ 
+\begin{itemize}
+  \item Filtry \textbf{nesmí mít ostré hrany} ve frekvenční oblasti — jejich prostorový obraz (sinc) by se rozprostřel přes celý snímek a způsobil nežádoucí artefakty.
+  \item Preferují se tvary odvozené od \textbf{Gaussovy křivky} (Butterworth, Hamming, Parzen aj.).
+  \item Periodicita signálu způsobuje \textbf{přesah filtru přes okraje} obrazu. Řešení: \emph{padding} (doplnění nulami nebo zrcadlením okrajů) nebo oříznutí okrajů po filtraci.
+  \item Síla filtrace je nepřímo úměrná ploše pod grafem filtru ve frekvenční oblasti.
+  \item 1D tvary filtrů se rozšiřují do 2D radiální symetrií (kruhová funkce vzdálenosti od středu spektra).
+\end{itemize}
+ 
+\subsection*{Speciální filtry}
+ 
+\textbf{Hommomorfní filtr} — normalizuje jas přes celý snímek a zvyšuje kontrast. Postup: (1) logaritmus obrazu, (2) filtrace ve frekvenční oblasti, (3) zpětná FT, (4) exponenciála.
+ 
+\textbf{Wienerův filtr} — optimální rekonstrukční filtr minimalizující střední kvadratickou chybu při přítomnosti šumu:
+\[
+  H_R(u,v) = \frac{H^*(u,v)}{|H(u,v)|^2 + \dfrac{S_{vv}(u,v)}{S_{ff}(u,v)}}
+\]
+kde $S_{ff}$ je spektrální hustota originálu a $S_{vv}$ je spektrální hustota šumu.
+ 
+% -------------------------------------------------------
+\section*{Korelace a autokorelace}
+ 
+\subsection*{Křížová korelace}
+ 
+Korelace dvou signálů $f$ a $g$ (hledání shody / detekce vzoru):
+\[
+  (f \star g)(x,y) = \sum_{x',y'} f(x', y') \cdot g(x'+x, y'+y)
+\]
+Ve frekvenční doméně: $\mathcal{F}\{f \star g\} = F^*(u,v) \cdot G(u,v)$ — konjugát prvního signálu krát druhý.
+ 
+\subsection*{Autokorelace}
+ 
+Speciální případ — signál korelován sám se sebou ($f = g$):
+\[
+  R(\tau) = \sum_x f(x) \cdot f(x + \tau)
+\]
+\begin{itemize}
+  \item Slouží k~\textbf{hledání periodicity} v~signálu nebo obraze.
+  \item Větší posun $\tau$ $\Rightarrow$ méně překrývajících se bodů $\Rightarrow$ nižší hodnota $\Rightarrow$ nutná \textbf{normalizace}.
+  \item Ve frekvenční doméně: $\mathcal{F}\{R(\tau)\} = |F(\omega)|^2$ (výkonové spektrum).
+  \item Praktická realizace přes FT: $R = \mathcal{F}^{-1}\{F \cdot F^*\}$ — výrazně rychlejší než přímý výpočet.
+\end{itemize}
+ 
+% -------------------------------------------------------
+\section*{Další typy integrálních transformací}
+ 
+\begin{itemize}
+  \item \textbf{Laplaceova transformace} — obecnější popis zahrnující tlumené signály ($p = a + j\omega$); FT je speciální případ pro $a = 0$.
+  \item \textbf{Diskrétní kosinová transformace (DCT)} — používá pouze reálné kosinové funkce, výsledné koeficienty jsou reálná čísla. Energie je soustředěna v~nízkých koeficientech $\Rightarrow$ vhodná pro \textbf{kompresi} (základ JPEG). Méně citlivá na přechody na okrajích než FT.
+  \item \textbf{Short Time FT (STFT)} — FT prováděná po krátkých úsecích signálu pomocí posuvného okna; umožňuje lokalizaci frekvencí v~čase za cenu omezení časového nebo frekvenčního rozlišení (Heisenbergův princip neurčitosti).
+  \item \textbf{Waveletová transformace} — mateřská vlnka se škáluje i posouvá; oproti STFT adaptivní velikost okna: krátké okno pro vysoké frekvence (dobrá prostorová lokalizace), dlouhé okno pro nízké frekvence. Používá se pro analýzu i kompresi (základ JPEG\,2000).
+\end{itemize}
