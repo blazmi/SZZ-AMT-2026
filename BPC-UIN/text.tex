@@ -11,113 +11,138 @@
 \maketitle
 
 \section{Otázka 19: Metody prohledávání stavového prostoru}
-\textbf{K dodělání:} 
+
+\subsection{Formulace problému a stavový prostor}
+Stavový prostor je množina všech možných stavů (konfigurací systému) a přechodů mezi nimi[cite: 24, 346]. Stav představuje jednoznačnou reprezentaci situace, zatímco operátor představuje přechod mezi stavy[cite: 347, 348]. Cílem je najít stav, který splňuje podmínky řešení úlohy[cite: 349]. Stavový graf reprezentuje kompletně celou úlohu, zatímco strom prohledávání vzniká dynamicky v paměti až samotnou expanzí z počátečního uzlu[cite: 24, 25, 356].
+
+\subsection{Neinformované metody prohledávání}
+Tyto algoritmy neznají další informace o cestě k cíli a rozhodují se jen na základě struktury grafu[cite: 29].
 \begin{itemize}
-    \item Z původních poznámek se sem nehodí nic. Je nutné vypracovat celou otázku od nuly.
-    \item Chybí: formulace problému, stavový prostor, strategie prohledávání.
-    \item Chybí: neinformované a informované metody (včetně heuristik).
-    \item Chybí: kompletnost a optimálnost algoritmů.
-    \item Chybí: příklady problémů v AI řešených těmito metodami.
+    \item \textbf{BFS (Breadth-First Search):} Prochází strom po vrstvách[cite: 32]. Využívá frontu (FIFO)[cite: 533]. Garantuje nalezení nejkratší cesty, ale má exponenciální paměťovou náročnost, protože drží celou frontu uzlů na aktuální úrovni[cite: 34, 558, 559].
+    \item \textbf{DFS (Depth-First Search):} Vybere jednu větev a tu rozvíjí do hloubky, dokud nenalezne konec[cite: 32]. Využívá zásobník (LIFO)[cite: 565]. Je paměťově méně náročné, ale nemusí najít optimální řešení a v nekonečném grafu se může zacyklit[cite: 34, 35, 567].
+    \item \textbf{UCS (Uniform-Cost Search):} Zobecněné BFS pro grafy s různými cenami hran[cite: 592]. Vybírá k expanzi uzel s nejnižší dosavadní cenou cesty od startu (Dijkstrův algoritmus)[cite: 37, 593].
+    \item \textbf{IDDFS (Iterative Deepening DFS):} Postupně spouští DFS s rostoucím limitem hloubky[cite: 42, 608]. Spojuje paměťovou efektivitu DFS a úplnost BFS[cite: 43].
 \end{itemize}
 
+\subsection{Informované metody (včetně heuristik)}
+Využívají pomocnou hodnotící funkci pro výběr uzlu k expanzi[cite: 615, 616]. Hodnotící funkce se typicky skládá ze skutečné ceny cesty $g(n)$ a heuristické funkce $h(n)$, která odhaduje budoucí náklady do cíle[cite: 47, 48, 49, 50]. 
+\begin{itemize}
+    \item \textbf{Admisibilní heuristika:} Nikdy nepřeceňuje skutečnou cenu cesty do cíle ($h(n) \le h^*(n)$)[cite: 51, 621]. Zajišťuje optimálnost[cite: 623].
+    \item \textbf{Konzistentní heuristika:} Splňuje trojúhelníkovou nerovnost ($h(n_A) \le c(n_A,n_B) + h(n_B)$)[cite: 625, 626]. Zajišťuje, že hodnota funkce nikdy neklesá a každá konzistentní heuristika je zároveň admisibilní[cite: 628].
+    \item \textbf{Příklady heuristik:} Manhattanská (pohyb ve 4 směrech), Euklidovská (vzdušná čára) nebo Octile (pohyb v 8 směrech s různou cenou pro diagonálu)[cite: 55, 56, 785, 787, 792].
+    \item \textbf{Greedy Best-First Search:} Vybírá stav pouze na základě nejmenší vzdálenosti heuristiky ($f(n) = h(n)$)[cite: 62, 630, 631]. Je rychlý, ale neoptimální a neúplný[cite: 64, 632].
+    \item \textbf{A*:} Vybírá uzel s nejlepší celkovou hodnotou $f(n) = g(n) + h(n)$[cite: 67, 68]. Pokud je heuristika admisibilní, algoritmus je optimální a úplný[cite: 69].
+    \item \textbf{Beam Search (Paprskové):} V každé vrstvě si ponechává pouze omezený počet nejlepších uzlů (šířka paprsku), čímž extrémně snižuje paměťovou náročnost[cite: 66, 775].
+\end{itemize}
+\textbf{Příklady problémů v AI:} Problém obchodního cestujícího (TSP), hledání nejkratší cesty v mapách (pathfinding) nebo hlavolamy typu Lišák (8-puzzle)[cite: 77, 127, 718].
 
+\newpage
 
 \section{Otázka 20: Biologicky inspirované výpočty}
-\textbf{K dodělání:}
+
+Optimalizační úlohy se snaží najít nejlepší řešení v přípustné množině vzhledem k cílové (fitness) funkci[cite: 83, 84, 85]. Metody jsou stochastické (využívají náhodnost k úniku z lokálních minim) a derivative-free (nepotřebují derivace cílové funkce, vhodné pro black-box)[cite: 88, 978, 979]. Zásadní je rovnováha mezi explorací (prohledávání nových oblastí) a exploatací (vyhlazování nalezeného řešení)[cite: 90, 91, 985, 990].
+
+\subsection{Evoluční algoritmy}
+Základní cyklus tvoří: inicializace populace, vyhodnocení fitness, selekce rodičů, křížení (crossover pro exploataci), mutace (pro exploraci) a náhrada populace[cite: 92, 1057, 1058, 1059, 1060, 1061, 1062].
 \begin{itemize}
-    \item Z původních poznámek se sem nehodí nic. Je nutné vypracovat celou otázku od nuly.
-    \item Chybí: rozdělení a principy evolučních a rojových algoritmů (GA, DE, PSO, ACO, GP).
-    \item Chybí: lokální optimalizační metody (HC, HC-12, SA).
-    \item Chybí: reprezentace a kódování řešení, surrogate optimalizace.
-    \item Chybí: teorie "no free lunch" a prokletí dimenzionality.
-    \item Chybí: příklady problémů v AI.
+    \item \textbf{GA (Genetické algoritmy):} Inspirováno Darwinovou evolucí[cite: 102]. Reprezentace může být binární (řetězce 0 a 1), reálná (vektor čísel pro spojité úlohy), permutační (pořadí unikátních prvků, nutno použít speciální operátory jako PMX/OX) nebo stromová (genetické programování)[cite: 95, 111, 999, 1000, 1001, 1008]. Selekce probíhá turnajem, ruletou nebo rankingem[cite: 106, 107].
+    \item \textbf{DE (Differential Evolution):} Populační metoda pro spojitou optimalizaci[cite: 128]. Nová řešení se generují odlišně: k náhodnému vektoru se přičítá vážený rozdíl dvou jiných náhodných vektorů ($v_i = x_{r1} + F \cdot (x_{r2} - x_{r3})$)[cite: 129, 1104].
+    \item \textbf{GP (Genetické programování):} Využívá stromovou reprezentaci, kde genotyp přímo kóduje algoritmus nebo matematický vzorec[cite: 95, 1008].
 \end{itemize}
 
+\subsection{Rojové algoritmy}
+\begin{itemize}
+    \item \textbf{PSO (Particle Swarm Optimization):} Inspirováno hejnem ptáků[cite: 138]. Každá částice upravuje svou rychlost a polohu na základě své nejlepší dosažené pozice (pBest) a globálně nejlepší pozice celého hejna (gBest)[cite: 139, 140].
+    \item \textbf{ACO (Ant Colony Optimization):} Inspirováno mravenci[cite: 141]. Využívá feromonovou stopu (pozitivní zpětná vazba pro kvalitní cesty) a její odpařování (negativní zpětná vazba bránící uvíznutí)[cite: 142, 143].
+\end{itemize}
+
+\subsection{Jednoprvkové lokální optimalizační metody}
+Na rozdíl od populačních metod pracují pouze s jedním řešením a mají minimální paměťovou náročnost[cite: 147, 148].
+\begin{itemize}
+    \item \textbf{HC (Hill-Climbing):} Hladová metoda, přijímá pouze zlepšující se řešení[cite: 125]. Snadno uvízne v prvním lokálním minimu nebo na plató[cite: 126, 1097].
+    \item \textbf{HC-12:} Hybridní algoritmus, který kombinuje lokální prohledávání s explorací a využívá principy podobné GA[cite: 144, 146]. Pokud uvízne, převezme genetickou informaci od souseda k odblokování[cite: 1136].
+    \item \textbf{SA (Simulated Annealing):} Inspirováno fyzikálním žíháním kovů[cite: 117]. Díky Metropolisovu kritériu dokáže přijmout i horší řešení ($P = e^{-\Delta E/T}$), čímž může vyskočit z lokálního minima[cite: 119, 1088]. Teplotní plán řídí míru explorace – při vysoké teplotě algoritmus funguje náhodně, při nízké přechází do lokální optimalizace[cite: 121, 122].
+\end{itemize}
+
+\subsection{Teoretické pojmy a problémy}
+\begin{itemize}
+    \item \textbf{Surrogate optimalizace:} Pro případy, kdy je výpočet fitness extrémně drahý (např. crash testy)[cite: 152, 1151]. Drahá funkce se nahradí levným matematickým modelem (metamodelem/sítí), na kterém běží optimalizace[cite: 153, 1152].
+    \item \textbf{No Free Lunch (NFL) Theorem:} Teorém tvrdí, že zprůměrujeme-li výkon přes všechny možné problémy, jsou všechny algoritmy (včetně náhodného prohledávání) stejně úspěšné[cite: 161, 162]. Neexistuje jeden univerzální nejlepší algoritmus[cite: 163, 1162].
+    \item \textbf{Vícekriteriální optimalizace:} Optimalizace protichůdných cílů (např. maximalizace kvality a minimalizace ceny). Řešením je Pareto-front, což je množina všech nedominovaných řešení[cite: 149, 151, 1147, 1149].
+\end{itemize}
+\textbf{Příklady problémů v AI:} Problém obchodního cestujícího (TSP), rozvrhování úloh (scheduling), návrh obvodů nebo simulace proudění[cite: 127, 152].
+
+\newpage
 
 \section{Otázka 21: Neuronové sítě – vybraná základní paradigmata}
-\textbf{K dodělání:}
-\begin{itemize}
-    \item Chybí: architektury ADALINE a RBF.
-    \item Chybí: koncept kapacity sítě (capacity).
-    \item Chybí: specifické příklady problémů v AI řešených těmito základními sítěmi.
-\end{itemize}
 
-\subsection{Formální neuron}
-Vnitřní potenciál neuronu $z$ lze vypočítat dvěma základními způsoby:
-\begin{itemize}
-    \item \textbf{Lineární:} $z = w_0 + \sum^n_{i=1}x_iw_i$ (kde $w_0$ je bias, $x_i$ jsou vstupy a $w_i$ jsou váhy)
-    \item \textbf{Radiální:} $z = w_0 + \sqrt{\sum^n_{i=1}(x_i-w_i)^2}$
-\end{itemize}
+\subsection{Formální neuron a aktivační funkce}
+Matematický model inspirovaný biologií. Vypočítá vážený součet vstupů a aplikuje na něj nelineární aktivační funkci[cite: 189]. Váha ($w$) určuje důležitost vstupu, zatímco bias ($b$) posouvá aktivační funkci a umožňuje neuronu být aktivní i při nulových vstupech[cite: 190]. Rovnice: $y = f(\sum(w_i \cdot x_i) + b)$[cite: 191].
+Mezi základní aktivační funkce patří skoková funkce (výstup 0 nebo 1), sigmoida (v rozsahu 0 až 1), hyperbolická tangenta (rozsah -1 až 1) a ReLU ($f(x) = \max(0, x)$)[cite: 192, 193, 194].
 
 \subsection{Architektury}
 \subsubsection{Perceptron}
-\begin{itemize}
-    \item \textbf{Topologie:} Jednovrstvá přímovazební síť.
-    \item \textbf{Aktivační funkce:} Nespojitá přenosová funkce (skoková, s prahem nebo bez).
-    \item \textbf{Učení:} Iterativní, s učitelem. Váhy se adaptují na základě odchylky výstupu.
-    \item \textbf{Omezení:} Funguje pouze jako lineární klasifikátor, řeší jen lineárně separabilní problémy (nelze realizovat funkci XOR).
-\end{itemize}
+Jednoduchá síť se skokovou aktivační funkcí[cite: 197]. Učí se úpravou vah na základě chyby. Dokáže modelovat logické funkce AND, OR a NOT, ale kvůli neschopnosti řešit lineárně neseparabilní úlohy nedokáže modelovat funkci XOR[cite: 195, 196, 198].
 
-\subsubsection{MLP (Vícevrstvý perceptron)}
-\begin{itemize}
-    \item \textbf{Topologie:} Vícevrstvá přímovazební síť (minimálně 3 vrstvy: vstupní, skrytá, výstupní). Úplné propojení neuronů mezi sousedními vrstvami.
-    \item \textbf{Aktivační funkce:} Spojité a diferencovatelné funkce, např. sigmoida ($f(z) = \frac{1}{1+e^{-\sigma \cdot z}}$) nebo tangenta hyperbolická ($f(z) = \frac{1-e^{-\sigma \cdot z}}{1+e^{-\sigma \cdot z}}$).
-    \item \textbf{Aplikace:} Modelování nelineárních funkcí a složitá klasifikace.
-\end{itemize}
+\subsubsection{ADALINE (Adaptive Linear Neuron)}
+Vylepšení perceptronu[cite: 200]. Při učení nepoužívá finální skokový výstup, ale lineární vážený součet před aplikací prahu[cite: 201]. To mu umožňuje minimalizovat spojitou kvadratickou chybu pomocí gradientního sestupu[cite: 202]. Chybový povrch je konvexní, takže má pouze jedno globální minimum[cite: 203, 204].
 
-\subsubsection{SOM (Kohonenova samoorganizační mapa)}
-\begin{itemize}
-    \item \textbf{Topologie:} Dvouvrstvá síť s definovaným okolím ve výstupní vrstvě.
-    \item \textbf{Učení:} Bez učitele, soutěžní strategie (kompetice). Aktivní je pouze jeden vítězný neuron.
-    \item \textbf{Princip:} Ve výstupní vrstvě se počítá vzdálenost $d$ předloženého vzoru od vah neuronu: $d_j = \sum^n_{i=1} (x_i - w_{ij}(t))^2$. Vítězný neuron a jeho okolí adaptují své váhy, aby se přiblížily vstupu.
-\end{itemize}
+\subsubsection{MLP (Multi-Layer Perceptron) a Backpropagation}
+Síť s alespoň jednou skrytou vrstvou s nelineární aktivační funkcí[cite: 207]. Překonává omezení perceptronu a funguje jako univerzální aproximátor[cite: 208]. K učení s učitelem se využívá algoritmus Backpropagation[cite: 211, 1263, 1265]. Algoritmus provádí dopředný průchod pro výpočet chyby a zpětný průchod, kdy se chyba šíří od výstupu pomocí řetízkového pravidla derivací ($\frac{dE}{dw} = \frac{dE}{dy} \cdot \frac{dy}{dz} \cdot \frac{dz}{dw}$) k úpravě vah gradientním sestupem[cite: 212, 213, 216, 1272]. Krok učení (learning rate) určuje velikost úpravy vah[cite: 217].
 
-\subsection{Učení (Algoritmus Backpropagation)}
-Učení s učitelem. Iterativní gradientní algoritmus, který minimalizuje kvadráty chybové funkce $E$.
-\begin{itemize}
-    \item \textbf{Výpočet chyby:} Chyba $E$ je rozdíl mezi skutečným výstupem $y$ a požadovaným výstupem $d$. Chyba pro jeden vzor: $^sE = \frac{1}{2}\sum_{j = 1}^{m}(^sy_j - ^sd_j)^2$
-    \item \textbf{Adaptace vah:} Váhy se přepočítávají pro minimalizaci celkové chyby. Nová váha: $w_{ij}(t+1) = w_{ij}(t) + \Delta w_{ij}$, kde změna váhy je $\Delta w_{ij} = -\alpha \cdot \frac{\partial E_c}{\partial w_{ij}}$ ($\alpha$ je koeficient učení).
-\end{itemize}
+\subsubsection{RBF (Radial Basis Function)}
+Sítě, kde aktivace neuronu závisí na vzdálenosti vstupu od centra Gaussovy křivky[cite: 228, 229]. Architektura má pouze jednu skrytou RBF vrstvu a lineární výstupní vrstvu[cite: 231, 232]. Učení je dvoufázové:
+\begin{enumerate}
+    \item \textbf{Bez učitele (k-means):} Určí se těžiště (centra) a šířka RBF neuronů pomocí shlukování[cite: 233, 235, 236].
+    \item \textbf{S učitelem:} Centra se zafixují a učí se pouze váhy výstupní lineární vrstvy analyticky (např. pseudoinverzní maticí), což je extrémně rychlé[cite: 237].
+\end{enumerate}
 
-\subsection{Klasifikace, regrese a problémy učení}
-\begin{itemize}
-    \item \textbf{Klasifikace:} Zařazení vstupních dat do tříd (např. detekce spamu).
-    \item \textbf{Regrese:} Odhad spojité výstupní hodnoty na základě vstupu.
-    \item \textbf{Overfitting (Přeučení):} Stav, kdy se neuronová síť přespříliš adaptuje na trénovací množinu (naučí se i šum) a ztrácí schopnost generalizace na nová data.
-\end{itemize}
+\subsubsection{SOM (Kohonenovy mapy)}
+Typ sítě pro učení bez učitele určený k redukci dimenzionality (často do 2D mřížky) a shlukování[cite: 246, 247, 1289]. Využívá princip Winner-Takes-All (WTA)[cite: 252]. Neuron s nejpodobnějším váhovým vektorem ke vstupu (BMU - Best Matching Unit) vyhrává[cite: 250]. Vítěz a jeho topologické okolí (funkce sousedství) následně upravují své váhy tak, aby se vstupu ještě více přiblížily[cite: 252, 254].
 
+\subsection{Kapacita sítě a Overfitting}
+Hloubka a šířka sítě určují její kapacitu. Větší síť má vyšší kapacitu a dokáže se naučit složitější vztahy[cite: 222]. Přílišná kapacita v kombinaci s malým datasetem však vede k přeučení (overfittingu) – síť se naučí trénovací data zpaměti, ale ztrácí schopnost generalizace na nových datech[cite: 222, 223].
 
+\textbf{Příklady problémů v AI:} Klasifikace lineárně separabilních i neseparabilních dat, komprese dat, predikce cen (regrese) a detekce anomálií[cite: 198, 208, 1293].
+
+\newpage
 
 \section{Otázka 22: Neuronové sítě – vybraná DNN paradigmata}
-\textbf{K dodělání:}
+
+Hluboké sítě (DNN) obsahují větší množství skrytých vrstev, což jim umožňuje učit se hierarchii příznaků (od jednoduchých hran k detekci složitých objektů) a dobře generalizovat na komplexních datech[cite: 259, 261]. 
+
+\subsection{CNN (Konvoluční neuronové sítě)}
+Sítě specializované na zpracování mřížkových dat, jako jsou obrázky[cite: 295, 296]. Řeší problém exploze parametrů klasických sítí sdílením vah – tentýž malý filtr (kernel) klouže po celém obraze[cite: 297, 298, 302, 303, 304]. Typická architektura střídá následující vrstvy:
 \begin{itemize}
-    \item Chybí: architektury RNN, Encoder-Decoder, Transformer (přehledově).
-    \item Chybí: ukázka implementace (Keras).
-    \item Chybí: příklady problémů v AI řešených pomocí DNN.
+    \item \textbf{Konvoluční vrstva:} Filtr provádí skalární součin a detekuje lokální vzory. Výstupem je mapa příznaků[cite: 298, 300, 301]. 
+    \item \textbf{Pooling vrstva (Max/Average):} Zmenšuje rozměr mapy (downsampling), snižuje výpočetní náročnost a zvyšuje invarianci vůči posunu objektu[cite: 305, 306].
+    \item K úpravě velikosti se používá posun filtru (\textit{stride}) nebo přidávání nul po obvodu vstupu (\textit{padding})[cite: 307, 308].
+    \item Na konci sítě se příznaky zploští (\textit{Flatten}) a zpracují plně propojenou vrstvou[cite: 309, 1339].
 \end{itemize}
 
-\subsection{Principy hlubokého učení (Deep Learning)}
-Využívá vícevrstvé neuronové sítě pro extrakci rysů ze surových dat. V nižších vrstvách identifikují hrany a geometrické tvary, ve vyšších vrstvách detekují komplexnější struktury (např. písmena nebo obličeje).
-
-\subsection{CNN (Konvoluční neuronová síť)}
-Typické využití pro zpracování obrazu. Místo klasického násobení matic využívá konvoluci.
+\subsection{RNN, LSTM, GRU a Transformery}
 \begin{itemize}
-    \item \textbf{Konvoluční vrstva:} Konvoluční jádro (kernel) o velikosti např. 3x3 až 11x11 prochází vstupní maticí obrazu.
-    \item \textbf{Výpočet velikosti výstupu:} Po projití konvolucí se velikost počítá jako $(N-F)/S + 1$, kde $N$ je rozměr vstupu, $F$ je velikost kernelu a $S$ je velikost kroku (stride).
-    \item \textbf{Max Pooling:} Slouží k redukci dimenzí vstupního signálu bez ztráty informační hodnoty. Z vybrané oblasti (např. 2x2) se vezme pouze maximální hodnota.
-    \item \textbf{Plně propojená vrstva (Fully-Connected):} Výsledek po extrakci rysů je na konci zpracován klasickou plně propojenou sítí pro finální klasifikaci.
+    \item \textbf{RNN (Rekurentní sítě):} Zpracovávají data sekvenčně. Z předchozího kroku se přenáší skrytý stav, což síti dává krátkodobou paměť[cite: 313, 1354]. Jsou náchylné na mizící/explodující gradienty u dlouhých sekvencí[cite: 314].
+    \item \textbf{LSTM (Long Short-Term Memory):} Řeší mizící gradient paměťovou buňkou a třemi hradly (vstupní, výstupní, zapomínací), které řídí tok informací napříč delšími sekvencemi[cite: 315, 1356].
+    \item \textbf{GRU (Gated Recurrent Unit):} Zjednodušená verze LSTM. Má pouze dvě hradla (update a reset) a je výpočetně rychlejší[cite: 1357, 1358].
+    \item \textbf{Transformer:} Architektura založená na mechanismu self-attention (bez rekurence)[cite: 317, 318, 1378]. Self-attention umožňuje modelu posoudit relevanci všech tokenů v sekvenci najednou[cite: 318, 1379, 1380]. Absence rekurence umožňuje masivní paralelizaci na GPU[cite: 319].
 \end{itemize}
 
-\subsection{Aktivační funkce pro DNN}
+\subsection{Techniky řešení problémů DNN a Optimalizace}
 \begin{itemize}
-    \item \textbf{ReLU (Rectified Linear Unit):} Pokud je hodnota menší než 0, nastaví ji na 0. Kladné hodnoty ponechává. $f(x) = \max(0, x)$.
-    \item \textbf{Leaky ReLU:} Založena na ReLU, ale záporné hodnoty nenastaví na nulu, nýbrž jim ponechá mírný sklon (násobí je malou konstantou).
-    \item \textbf{Softmax:} Používá se pro klasifikaci do více tříd ve výstupní vrstvě. Vrací vektor pravděpodobností se součtem 1. Počítá se jako $softmax(z)_i = \frac{e^{z_i}}{\sum_{j = 1}^{N}e^{z_j}}$.
+    \item \textbf{Aktivační funkce a Ztráta:} Běžně se používá ReLU (brání mizení gradientu v kladné části) a Softmax ve výstupní vrstvě pro získání pravděpodobností tříd[cite: 265, 273, 274]. Jako ztrátová funkce pro klasifikaci dominuje Křížová entropie (Cross-entropy)[cite: 274].
+    \item \textbf{Regularizace:} Metody pro zabránění přeučení[cite: 268]. Patří sem L1 regularizace (nuluje méně důležité váhy) a L2 regularizace (drží váhy nízko)[cite: 269, 270, 1403, 1408, 1415]. Dále se používá Dropout, který při tréninku náhodně vypíná určité procento neuronů, čímž vytváří robustní ensemble model[cite: 270, 1386, 1390].
+    \item \textbf{Optimalizátor Adam:} Adaptivní optimalizátor. Na rozdíl od základního SGD (Stochastic Gradient Descent) používá pro každou váhu vlastní učící krok na základě klouzavého průměru a rozptylu historických gradientů, což zajišťuje rychlou a stabilní konvergenci[cite: 341, 342, 343, 1422, 1439].
 \end{itemize}
 
-\subsection{Trénink DNN}
-\begin{itemize}
-    \item \textbf{Batch learning:} Váhy se neupravují po každém vzoru, ale změny se akumulují pro celou dávku (batch) dat. Nové váhy se spočítají průměrem těchto změn, což stabilizuje učení a zrychluje proces.
-\end{itemize}
+\subsection{Implementace v Kerasu}
+K definici modelů se používá \textbf{Sequential API} (jednoduchý zásobník vrstev) nebo \textbf{Functional API} (flexibilní graf propojení pro složitější architektury)[cite: 324, 326]. 
+Proces tvorby se skládá ze tří hlavních kroků[cite: 329, 330, 331, 332]:
+\begin{enumerate}
+    \item Definice vrstev a jejich parametrů (např. \texttt{Dense(128, activation='relu')}).
+    \item \texttt{compile()}: Nastavení ztrátové funkce a optimalizátoru.
+    \item \texttt{fit()}: Spuštění iterativního tréninku na \textit{epochs} (počet průchodů datasetem) a po blocích zvaných \textit{batch}[cite: 335, 336].
+    \item \texttt{evaluate()}: Vyhodnocení na testovacích datech[cite: 340].
+\end{enumerate}
 
 \end{document}
