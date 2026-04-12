@@ -722,3 +722,196 @@ Speciální případ — signál korelován sám se sebou ($f = g$):
   \item \textbf{Short Time FT (STFT)} — FT prováděná po krátkých úsecích signálu pomocí posuvného okna; umožňuje lokalizaci frekvencí v~čase za cenu omezení časového nebo frekvenčního rozlišení (Heisenbergův princip neurčitosti).
   \item \textbf{Waveletová transformace} — mateřská vlnka se škáluje i posouvá; oproti STFT adaptivní velikost okna: krátké okno pro vysoké frekvence (dobrá prostorová lokalizace), dlouhé okno pro nízké frekvence. Používá se pro analýzu i kompresi (základ JPEG\,2000).
 \end{itemize}
+
+
+
+\textbf{Z lonska, bylo to ve spatnem souboru}
+
+\section{Počítačové vidění - předzpracování obrazu, segmentace obrazu, popis a klasifikace obrazu}
+\begin{figure}
+    \includegraphics[scale = 0.4]{img/pc_videni.png}
+\end{figure}
+\subsection{Digitalizace}
+Matematická funkce, dvou nebo více argumentů. Obrazová fce: \(f(x,y)\), spojitá v čase: \(f(x,y,t)\).\\
+Hodnoty obrazové funkce: jas(BW obraz), RBG(barevný obraz), teplota(termovize), schopnost pohltit záření(rentgenový tomograf).\\
+Diskrétní obrazová funkce \(f(x,y)\) je matice pixelů, hodnota pro BW obraz 0 je černá barva, 255 bílá.\\
+Pomocí vzorkování v matici MxN bodů, kvantování spojité jasové úrovně každého vzorku do k intervalů. Vzorkování je rozložení bodů v ploše \(g_s = g(x,y)\cdot s(x,y)\), kde \textit{g} je spojitý obraz a \textit{s} je vzorkovací funkce. Kvantování je převod spojité hodnoty jasové funkce v daném vzorku do příslušného číselného údaje z intervalu jasových hodnot.\\
+Obrazový šum jsou velké změny hodnoty jasových hodnot sousedních bodů, vzniká během snímání, zpracování nebo přenosu. Typy šumu: aditivní, multiplikativní, pepř a sůl.\\
+
+\subsection{Předzpracování obrazu}
+Cíle:
+\begin{itemize}
+    \item potlačit šum
+    \item odstranit zkreslení
+    \item potlačit či zvýraznit jiné rysy obrazu
+\end{itemize}
+Předzpracováním nezískáme žádnou novou informaci.\\
+Metody předzpracování:
+\begin{itemize}
+    \item bodové jasové transformace
+    \item geometrické transformace
+    \item lokální předzpracování
+    \item obnovení obrazu
+\end{itemize}
+
+\subsubsection{Bodové jasové transformace}
+Závisle na pozici:
+\begin{itemize}
+    \item zdroj poruch vzniklý při digitalizaci a přenosu obrazu
+    \item systematické chyby lze potlačit na základě  znalosti odchylky citlivosti každého bodu od ideální převodní charakteristiky:
+          $f(i,j) = e(i,j)\cdot g(i,j)$\\
+          Násobíme degradačním koeficientem g
+\end{itemize}
+\newpage
+Nezávislé na pozici:
+\begin{figure}
+    \includegraphics[scale = 0.13]{img/transf_krivka.png}
+\end{figure}
+
+\subsubsection{Geometrické transformace}
+Používají se k odstranění geometrických zkreslení.\\
+Dva kroky:
+\begin{itemize}
+    \item plošná transformace
+    \item jasová transformace
+\end{itemize}
+Plošná transformace:
+\begin{equation}
+    x' = \sum_{r =0}^m \sum_{k=0}^{m-r}a_{rk}x^ry^k, \;\;\;\; y' = \sum_{r =0}^m \sum_{k=0}^{m-r}b_{rk}x^ry^k
+\end{equation}
+dvojce sobě odpovídajících bod x,y a x',y'\\
+Jasová transformace:
+Přiřazení bodu (x,y) hodnotu jasu nejbližšího bodu v diskrétní mřížce\\
+Druhá možnost je určení hodnoty poměrem vzdáleností nejbližších bodů.\\
+\newpage
+\subsubsection{Lokální předzpracování}
+Za účelem filtrace šumu, detekce hran, nebo ostření obrazu.\\
+Filtrace:
+\begin{itemize}
+    \item průměrování
+    \item konvoluční maska
+    \item metoda mediánem
+\end{itemize}
+\begin{figure}
+    \includegraphics[scale = 0.25]{img/konvoluce_maska.png}
+\end{figure}
+
+Detekce hran:
+\begin{itemize}
+    \item pomocí derivačních filtrů - 1. a 2. derivace
+    \item gradientní operátory
+    \item laplaceovy operátory
+\end{itemize}
+\begin{figure}
+    \includegraphics[scale = 0.7]{img/hrany.png}
+\end{figure}
+Robertsův, Prewittové, Sobelův, Robinsonův\\
+Kirschův, Laplaceův(čtyřokolí, osmiokolí)\\
+
+\subsubsection{Obnovení obrazu}
+rozostření objektivu, rozmazání pohybujícícho se objektu\\
+
+\subsection{Segmentace}
+Snaha rozčlenit obraz do oblastí, které mají úzkou souvislost s předměty či oblastmi reálného světa zachyceného na obrazu.\\
+výsledek je soubor vzájemně nepřekrývajících se oblastí.\\
+dělí se na:
+\begin{itemize}
+    \item kompletní - oblasti jednoznačně korespondují s objekty vstupního brazu
+    \item částečná - oblasti nemusí přímo korespondovat s objekty, jsou homogenní vůči nějaké vlastnosti(jas, barva, odrazivost)
+\end{itemize}
+Cíl připravit data pro popis a redukovat objem dat.\\
+Metody:
+\begin{itemize}
+    \item prahování
+    \item detekce hran
+    \item segmentace narůstání oblastí
+          \begin{itemize}
+              \item spojování oblastí
+              \item štěpení oblastí
+              \item štěpení a spojování oblastí
+          \end{itemize}
+    \item srovnání se vzorem
+\end{itemize}
+\begin{figure}
+    \includegraphics[scale = 0.3]{img/segmentace.png}
+\end{figure}
+
+\subsubsection{Prahování}
+Vychází z toho, že objekt a pozadí mají rozdílné vlastnosti.\\
+Vychází z toho, že mnoho objektů či oblastí obrazu je charakterizováno konstantní odrazivostí či pohltivostí svého povrchu.\\
+
+\subsubsection{Detekce hran}
+Hranice objektů se tvoří z hran nalezených pomocí hranových detektorů.\\
+Prahování obrazu hran vychází z obrazu velikosti gradientu, který je prahovaný vhodným prahem. Odstraňuje bezvýznamné hrany. Zpracování výsledku pomocí vypuštění všech hran, které nesplňují určitou velikost.\\
+Relaxace hran je vytváření souvislých hranic. Při konstrukci se uvažuje s vlastnostmi každé hrany, v kontextu hran, které se vyskytují v jejím okolí. Vlastnosti hran se iteračně zpřesňují až dokud není hranový objekt přesný.\\
+
+\subsubsection{Segmentace narůstání oblastí}
+Spojování oblastí:
+\begin{itemize}
+    \item počáteční rozdělení obrazu do velkého množství malých oblastí
+    \item definice kritéria spojování
+    \item spojování sousedních oblastí na základě kritéria
+\end{itemize}
+Štěpení oblastí:
+\begin{itemize}
+    \item opak spojování
+    \item postupné rozkládání obrazu na menší části
+\end{itemize}
+Štěpení a spojování oblastí:
+\begin{itemize}
+    \item pyramidální reprezentace obrazu
+    \item je-li oblast v dané úrovni pyramidy nehomogenní, je rozštěpena na 4 podoblasti
+    \item jsou-li oblasti navzájem homogenní a lze je ve vyšší úrovni spojit do jedné, jsou spojeny
+\end{itemize}
+
+\subsection{Popis}
+Snaha určit příznaky(vzor, číselný vektor) nebo primitiva(nečíselný syntaktický popis) obrazu.\\
+Popis musí být být invariantní proti - posunutí, měřítku, natočení, jasu a šumu.\\
+\subsubsection{Skalární popisy}
+velikost, výška, šířka, výstřednost(poměr délek nejdelších na sebe kolmých tětiv), podlouhlost(poměr mezi délkou a šířkou pravoúhelníku opisující oblast)\\
+
+\subsubsection{Chani codes}
+řetězení, řetězové kódy\\
+\begin{figure}
+    \includegraphics[scale = 0.3]{img/chain_codes.png}
+\end{figure}
+\subsubsection{geometrický popis}
+přímost hranice - poměr mezi celkovým počtem bodů hranice a počtem bodů, ve kterých hranice mění směr\\
+\begin{figure}
+    \includegraphics[scale = 0.2]{img/geometricky_popis.png}
+\end{figure}
+\newpage
+\subsection{Klasifikace}
+rozpoznávání předmětů spočívá v jejich zařazování do tříd - klasifikátor\\
+Metody rozpoznání:
+\begin{itemize}
+    \item statické příznakové - zaměřují se na měřitelné veličiny objektu
+    \item strukturní syntaktické - identifikace elementů objektu a analýza vztahů mezi nimi
+    \item hybridní
+\end{itemize}
+(jsou i další, toto jsou ty hlavní)\\
+\subsubsection{Učení}
+\begin{enumerate}
+    \item volba formálního popisu
+    \item návrh rozhodovacího pravidla klasifikátoru
+    \item způsob učení klasifikátoru - s učitelem, bez učitele
+\end{enumerate}
+\subsubsection{Příznakově popsané předměty}
+obraz je sloupcový vektor, jehož souřadnice tvoří vektory\\
+jednotlivým třídám odpovídají shluky obrazů, které lze oddělit vhodnou křivkou pomocí diskriminačních funkcí
+
+\begin{figure}
+    \includegraphics[scale = 0.2]{img/priznakove.png}
+\end{figure}
+
+\subsubsection{Syntakticky popsané předměty}
+
+Identifikace elementů objektu a analýza mezi nimi\\
+Vužívá primitiva což jsou informace o struktuře nebo kvantitativních či kvalitativních vlastnostech předmětu.\\
+Vztahy mezi primitivy se nazývají relace.\\
+Klasifikace vychází z teorie formálních jazyků.\\
+Primitivum je popsané terminálem, množina terminálů se nazývá abeceda. Řetěz terminálů pak tvoří větu. Věty popisují objekty, které patří do třídy daného jazyka.\\
+Rozhoduje se zda věta popisující objekt patří či nepatří do některé třídy.\\
+\begin{figure}
+    \includegraphics[scale = 0.7]{img/syntakticke.png}
+\end{figure}
